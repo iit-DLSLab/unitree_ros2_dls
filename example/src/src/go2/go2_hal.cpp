@@ -56,7 +56,7 @@ class LowLevelCmdNode : public rclcpp::Node {
 
 
 void LowLevelCmdNode::Init() {
-  InitLowCmd();
+  InitLowCmd(); //TODO uncomment
 
   low_cmd_pub_ = this->create_publisher<unitree_go::msg::LowCmd>("/lowcmd", 10);
   low_state_sub_ = this->create_subscription<unitree_go::msg::LowState>(
@@ -92,6 +92,7 @@ void LowLevelCmdNode::InitLowCmd() {
 }
 
 
+// Publish states to DLS2 topics
 void LowLevelCmdNode::LowStateMessageHandler(
     const unitree_go::msg::LowState::SharedPtr msg) {
   low_state_ = *msg;
@@ -109,30 +110,89 @@ void LowLevelCmdNode::LowStateMessageHandler(
 
 
   // Publish DLS2 blind state message
-  for (int i = 0; i < 12; i++) {
+  // First motors state is FR
+  for (int i = 0; i < 3; i++) {
     motor_[i] = low_state_.motor_state[i];
-    blind_state_.joints_position[i] = motor_[i].q;
-    blind_state_.joints_velocity[i] = motor_[i].dq;
-    blind_state_.joints_acceleration[i] = motor_[i].ddq;
-    blind_state_.joints_effort[i] = motor_[i].tau_est;
+    blind_state_.joints_position[i+3] = motor_[i].q;
+    blind_state_.joints_velocity[i+3] = motor_[i].dq;
+    blind_state_.joints_acceleration[i+3] = motor_[i].ddq;
+    blind_state_.joints_effort[i+3] = motor_[i].tau_est;
   }
+
+  // Second motors state is FL
+  for (int i = 3; i < 6; i++) {
+    motor_[i] = low_state_.motor_state[i];
+    blind_state_.joints_position[i-3] = motor_[i].q;
+    blind_state_.joints_velocity[i-3] = motor_[i].dq;
+    blind_state_.joints_acceleration[i-3] = motor_[i].ddq;
+    blind_state_.joints_effort[i-3] = motor_[i].tau_est;
+  }
+
+  // Third motors state is RR
+  for (int i = 6; i < 9; i++) {
+    motor_[i] = low_state_.motor_state[i];
+    blind_state_.joints_position[i+3] = motor_[i].q;
+    blind_state_.joints_velocity[i+3] = motor_[i].dq;
+    blind_state_.joints_acceleration[i+3] = motor_[i].ddq;
+    blind_state_.joints_effort[i+3] = motor_[i].tau_est;
+  }
+
+  // Fourth motors state is RL
+  for (int i = 9; i < 12; i++) {
+    motor_[i] = low_state_.motor_state[i];
+    blind_state_.joints_position[i-3] = motor_[i].q;
+    blind_state_.joints_velocity[i-3] = motor_[i].dq;
+    blind_state_.joints_acceleration[i-3] = motor_[i].ddq;
+    blind_state_.joints_effort[i-3] = motor_[i].tau_est;
+  }
+
   blind_state_pub_->publish(blind_state_);
   
 }
 
 
+// Subscribe to DLS2 trajectory generator message and publish low level command to Unitree
 void LowLevelCmdNode::TrajectoryGeneratorMessageHandler(
     const dls2_msgs::msg::TrajectoryGeneratorMsg::SharedPtr msg) {
 
   trajectory_generator_ = *msg;
-
-  for (int j = 0; j < 12; j++) {
-      low_cmd_.motor_cmd[j].q = trajectory_generator_.joints_position[j];
-      low_cmd_.motor_cmd[j].dq = trajectory_generator_.joints_velocity[j];
-      low_cmd_.motor_cmd[j].kp = trajectory_generator_.kp[j];
-      low_cmd_.motor_cmd[j].kd = trajectory_generator_.kd[j];
-      low_cmd_.motor_cmd[j].tau = 0;
+  
+  // First motors state is FR
+  for (int i = 0; i < 3; i++) {  
+    low_cmd_.motor_cmd[i+3].q = trajectory_generator_.joints_position[i];
+    low_cmd_.motor_cmd[i+3].dq = trajectory_generator_.joints_velocity[i];
+    low_cmd_.motor_cmd[i+3].kp = trajectory_generator_.kp[i];
+    low_cmd_.motor_cmd[i+3].kd = trajectory_generator_.kd[i];
+    low_cmd_.motor_cmd[i+3].tau = 0;
   }
+  
+  // Second motors state is FL
+  for (int i = 3; i < 6; i++) {  
+    low_cmd_.motor_cmd[i-3].q = trajectory_generator_.joints_position[i];
+    low_cmd_.motor_cmd[i-3].dq = trajectory_generator_.joints_velocity[i];
+    low_cmd_.motor_cmd[i-3].kp = trajectory_generator_.kp[i];
+    low_cmd_.motor_cmd[i-3].kd = trajectory_generator_.kd[i];
+    low_cmd_.motor_cmd[i-3].tau = 0;
+  }
+
+  // Third motors state is RR
+  for (int i = 6; i < 9; i++) {  
+    low_cmd_.motor_cmd[i+3].q = trajectory_generator_.joints_position[i];
+    low_cmd_.motor_cmd[i+3].dq = trajectory_generator_.joints_velocity[i];
+    low_cmd_.motor_cmd[i+3].kp = trajectory_generator_.kp[i];
+    low_cmd_.motor_cmd[i+3].kd = trajectory_generator_.kd[i];
+    low_cmd_.motor_cmd[i+3].tau = 0;
+  }
+
+  // Fourth motors state is RL
+  for (int i = 9; i < 12; i++) {  
+    low_cmd_.motor_cmd[i-3].q = trajectory_generator_.joints_position[i];
+    low_cmd_.motor_cmd[i-3].dq = trajectory_generator_.joints_velocity[i];
+    low_cmd_.motor_cmd[i-3].kp = trajectory_generator_.kp[i];
+    low_cmd_.motor_cmd[i-3].kd = trajectory_generator_.kd[i];
+    low_cmd_.motor_cmd[i-3].tau = 0;
+  }
+
   get_crc(low_cmd_);  // Check motor cmd crc
   low_cmd_pub_->publish(low_cmd_);
 

@@ -21,9 +21,12 @@
 class LowLevelCmdNode : public rclcpp::Node {
   public:
     explicit LowLevelCmdNode() : Node("low_level_cmd_node") {
-        Init();
+      Init();
+      Start();
   }
-    void Init();
+
+  void Init();
+  void Start();
 
   private:
     void InitLowCmd();
@@ -42,6 +45,7 @@ class LowLevelCmdNode : public rclcpp::Node {
 
     rclcpp::Publisher<unitree_go::msg::LowCmd>::SharedPtr low_cmd_pub_;
     rclcpp::Subscription<unitree_go::msg::LowState>::SharedPtr low_state_sub_;
+    rclcpp::TimerBase::SharedPtr timer_;
 
     // DLS2 related publisher and subscriber
     dls2_msgs::msg::ImuMsg imu_;              // default init
@@ -58,17 +62,17 @@ class LowLevelCmdNode : public rclcpp::Node {
 void LowLevelCmdNode::Init() {
   InitLowCmd(); //TODO uncomment
 
-  low_cmd_pub_ = this->create_publisher<unitree_go::msg::LowCmd>("/lowcmd", 10);
+  low_cmd_pub_ = this->create_publisher<unitree_go::msg::LowCmd>("/lowcmd", 1);
   low_state_sub_ = this->create_subscription<unitree_go::msg::LowState>(
       "/lowstate", 10, [this](const unitree_go::msg::LowState::SharedPtr msg) {
         LowStateMessageHandler(msg);
       });
   
   // This are the DLS2 related publisher and subscriber
-  imu_pub_ = this->create_publisher<dls2_msgs::msg::ImuMsg>("/dls2/imu", 10);
-  blind_state_pub_ = this->create_publisher<dls2_msgs::msg::BlindStateMsg>("/dls2/blind_state", 10);
+  imu_pub_ = this->create_publisher<dls2_msgs::msg::ImuMsg>("/dls2/imu", 1);
+  blind_state_pub_ = this->create_publisher<dls2_msgs::msg::BlindStateMsg>("/dls2/blind_state", 1);
   trajectory_generator_sub_ = this->create_subscription<dls2_msgs::msg::TrajectoryGeneratorMsg>(
-      "/dls2/trajectory_generator", 10, [this](const dls2_msgs::msg::TrajectoryGeneratorMsg::SharedPtr msg) {
+      "/dls2/trajectory_generator", 1, [this](const dls2_msgs::msg::TrajectoryGeneratorMsg::SharedPtr msg) {
         TrajectoryGeneratorMessageHandler(msg);
       });
 
@@ -89,6 +93,14 @@ void LowLevelCmdNode::InitLowCmd() {
     low_cmd_.motor_cmd[i].kd = (0);
     low_cmd_.motor_cmd[i].tau = (0);
   }
+}
+
+void LowLevelCmdNode::Start() {
+  /*loop publishing thread*/
+  timer_ = this->create_wall_timer(std::chrono::milliseconds(2), [this] {
+    LowCmdWrite();
+    // timer_->cancel();
+  });
 }
 
 
@@ -193,8 +205,15 @@ void LowLevelCmdNode::TrajectoryGeneratorMessageHandler(
     low_cmd_.motor_cmd[i-3].tau = 0;
   }
 
-  get_crc(low_cmd_);  // Check motor cmd crc
-  low_cmd_pub_->publish(low_cmd_);
+    //get_crc(low_cmd_);  // Check motor cmd crc
+    //low_cmd_pub_->publish(low_cmd_);
+
+}
+
+void LowLevelCmdNode::LowCmdWrite() {
+
+    get_crc(low_cmd_);  // Check motor cmd crc
+    low_cmd_pub_->publish(low_cmd_);
 
 }
 
@@ -203,6 +222,7 @@ int main(int argc, char** argv) {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<LowLevelCmdNode>();
   node->Init();
+  node->Start();
   rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;

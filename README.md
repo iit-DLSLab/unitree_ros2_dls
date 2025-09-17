@@ -1,5 +1,5 @@
 # Introduction
-This repo uses [unitree_ros2](https://github.com/unitreerobotics/unitree_ros2) from unitree. It's just adding some new messages and a complete go2_hal script to talk with the robot, compatible with some dls controllers.
+This repo uses [unitree_ros2](https://github.com/unitreerobotics/unitree_ros2) from unitree. It's just adding some new messages and a complete robot_hal script to talk with the robot, compatible with some dls controllers.
 
 
 
@@ -98,7 +98,12 @@ colcon build
 ```
 After compilation, run in the terminal:
 ```bash
-./install/unitree_ros2_example/bin/go2_hal 
+./install/unitree_ros2_example/bin/robot_hal 
 ```
 
+
+You can even use 
+```bash
+python3 launch_hal.py
+```
 

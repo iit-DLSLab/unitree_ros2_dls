@@ -79,7 +79,7 @@ target_compile_features(g1_dual_arm_example PRIVATE cxx_std_20)
 add_executable(g1_audio_client_example src/g1/audio_client/g1_audio_client_example.cpp)
 target_compile_features(g1_audio_client_example PRIVATE cxx_std_20)
 
-add_executable(go2_hal src/go2/go2_hal.cpp src/common/motor_crc.cpp)
+add_executable(robot_hal src/go2/robot_hal.cpp src/common/motor_crc.cpp)
 
 
 ament_target_dependencies(low_level_ctrl ${DEPENDENCY_LIST})
@@ -104,11 +104,10 @@ ament_target_dependencies(g1_ankle_swing_example ${DEPENDENCY_LIST})
 ament_target_dependencies(g1_dual_arm_example ${DEPENDENCY_LIST})
 ament_target_dependencies(g1_audio_client_example ${DEPENDENCY_LIST})
 
-ament_target_dependencies(go2_hal ${DEPENDENCY_LIST})
-
+ament_target_dependencies(robot_hal ${DEPENDENCY_LIST})
 
 install(TARGETS 
-        go2_hal
+        robot_hal
         low_level_ctrl
         low_level_ctrl_hg
         g1_low_level_example

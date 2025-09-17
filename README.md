@@ -14,10 +14,12 @@ ros-humble-rosidl-generator-dds-idl
 A conda environment can be found in the folder installation
 
 ### 2. Compile unitree_go and unitree_api packages
-After compiling cyclone-dds, ROS2 dependencies is required for compilation of the unitree_go and unitree_api packages. Therefore, before compiling, it is necessary to source the environment of ROS2.
+After compiling cyclone-dds, ROS2 dependencies is required for compilation of the unitree_go and unitree_api packages:
 
 ```bash
+cd cyclonedds_ws
 colcon build # Compile all packages in the workspace
+source install/setup.bash
 ```
 
 ## Connect to Unitree robot

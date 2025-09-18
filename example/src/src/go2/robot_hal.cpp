@@ -2,11 +2,14 @@
 #include <cmath>
 #include <cstring>
 #include <string>
+#include <thread>
 
 #include "motor_crc.h"
 #include "rclcpp/rclcpp.hpp"
 #include "unitree_go/msg/low_cmd.hpp"
 #include "unitree_go/msg/low_state.hpp"
+
+#include "g1/g1_motion_switch_client.hpp"
 
 // DLS2 related message
 #include "dls2_msgs/msg/imu_msg.hpp"
@@ -23,6 +26,7 @@ class LowLevelCmdNode : public rclcpp::Node {
     explicit LowLevelCmdNode() : Node("low_level_cmd_node") {
       Init();
       Start();
+      std::cout << "HAL started correctly." << std::endl;
   }
 
   void Init();
@@ -37,7 +41,8 @@ class LowLevelCmdNode : public rclcpp::Node {
 
     // Don't know what this function does
     std::string queryServiceName(std::string form, std::string name);
-
+    int queryMotionStatus();
+    std::shared_ptr<unitree::robot::g1::MotionSwitchClient> client_;
 
     unitree_go::msg::LowCmd low_cmd_;      // default init
     unitree_go::msg::LowState low_state_;  // default init
@@ -60,15 +65,43 @@ class LowLevelCmdNode : public rclcpp::Node {
 
 
 void LowLevelCmdNode::Init() {
-  InitLowCmd(); //TODO uncomment
+  
+  // Deactivate any control mode on the robot
+  client_ = std::make_shared<unitree::robot::g1::MotionSwitchClient>(this);
 
+  // HACK
+  int32_t ret = client_->ReleaseMode();
+  std::this_thread::sleep_for(std::chrono::seconds(1)); 
+  ret = client_->ReleaseMode();
+  std::this_thread::sleep_for(std::chrono::seconds(1)); 
+  ret = client_->ReleaseMode();
+  std::this_thread::sleep_for(std::chrono::seconds(1)); 
+
+  /*while (true) {
+    std::cout << "Try to deactivate the motion control-related service."
+              << std::endl;
+    int32_t ret = client_->ReleaseMode();
+    
+    if (ret == 0) {
+      std::cout << "ReleaseMode succeeded." << std::endl;
+      break;
+    } else {
+      std::cout << "ReleaseMode failed. Error code: " << ret << std::endl;
+    }
+
+    // Sleep for 1 second to ensure proper initialization
+    std::this_thread::sleep_for(std::chrono::seconds(1));    
+  }*/
+
+  // Create publishers and subscribers to talk with Unitree
+  InitLowCmd(); 
   low_cmd_pub_ = this->create_publisher<unitree_go::msg::LowCmd>("/lowcmd", 1);
   low_state_sub_ = this->create_subscription<unitree_go::msg::LowState>(
       "/lowstate", 10, [this](const unitree_go::msg::LowState::SharedPtr msg) {
         LowStateMessageHandler(msg);
       });
   
-  // This are the DLS2 related publisher and subscriber
+  // Create publishers and subscribers to talk with the controller/DLS2
   imu_pub_ = this->create_publisher<dls2_msgs::msg::ImuMsg>("/dls2/imu", 1);
   blind_state_pub_ = this->create_publisher<dls2_msgs::msg::BlindStateMsg>("/dls2/blind_state", 1);
   trajectory_generator_sub_ = this->create_subscription<dls2_msgs::msg::TrajectoryGeneratorMsg>(

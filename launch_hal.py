@@ -5,7 +5,8 @@ sys.path.append(dir_path+"/../")
 
 import time
 
-submodule_path = dir_path + "/example/ros2/install"
+submodule_path = dir_path + "/example/install"
+print("submodule_path:", submodule_path)
 if not os.path.exists(submodule_path):
     print("Build the HAL by hand first!!")
 else:
@@ -14,7 +15,8 @@ else:
     print("\n\n")
     time.sleep(2)
     os.system(" \
-    cd /example/ros2 && \
+    cd /example && \
+    colcon build && \
     source install/setup.bash && \
     ./install/unitree_ros2_example/bin/robot_hal")
 

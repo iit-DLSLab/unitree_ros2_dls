@@ -82,7 +82,7 @@ sudo ufw allow from 192.168.123.161 to any port 7400:65535 proto udp
 
 ### 3. Running the hal
 
-The source code of examples locates at `/example/src/src`.
+The source code of the hal is located at `/hal/src/hal`.
 
 Open a terminal and input:
 ```bash

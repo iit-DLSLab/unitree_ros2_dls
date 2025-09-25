@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="" schematypens=""?>
 <package format="3">
-  <name>unitree_ros2_example</name>
+  <name>hal</name>
   <version>0.0.0</version>
   <description>Uniree ros2 example</description>
   <maintainer email="unitree@unitree.com">Unitree</maintainer>

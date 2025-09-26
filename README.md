@@ -11,13 +11,14 @@ The main dependencies other ros-humble are
 ros-humble-rmw-cyclonedds-cpp
 ros-humble-rosidl-generator-dds-idl
 ```
-A conda environment can be found in the folder installation
+An example of conda environment containing these dependencies can be found in the folder installation. 
 
-### 2. Compile unitree_go and unitree_api packages
-After compiling cyclone-dds, ROS2 dependencies is required for compilation of the unitree_go and unitree_api packages:
+### 2. Compile unitree packages packages
+First, compile unitree stuff:
 
 ```bash
-cd cyclonedds_ws
+git submodule update --init --recursive
+cd unitree_ros2/cyclonedds_ws
 colcon build # Compile all packages in the workspace
 source install/setup.bash
 ```
@@ -31,14 +32,11 @@ Next, open the network settings, find the network interface that the robot conne
 
 Open setup.sh file.
 ```bash
-sudo gedit ~/unitree_ros2/setup.sh
+sudo gedit setup.bash
 ```
 ```bash
 #!/bin/bash
-echo "Setup unitree ros2 environment"
-source /opt/ros/foxy/setup.bash
-source $HOME/unitree_ros2/cyclonedds_ws/install/setup.bash
-export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+.......
 export CYCLONEDDS_URI='<CycloneDDS><Domain><General><Interfaces>
                             <NetworkInterface name="enp3s0" priority="default" multicast="default" />
                         </Interfaces></General></Domain></CycloneDDS>'
@@ -48,17 +46,12 @@ Modify it to the corresponding network interface according to the actual situati
 
 Source the environment to setup the ROS2 support of Unitree robot: 
 ```bash
-source ~/unitree_ros2/setup.sh
+source setup.bash
 ```
-If you don't want to source the bash script every time when a new terminal opens, you can write the content of bash script into ~/.bashrc, but attention should be paid when there are multiple ROS environments coexisting in the system.
 
 If your computer is not connected to the robot but you still want to use Unitree ROS2 for simulation and other functions, you can use the local loopback "lo" as the network interface.
 ```bash
-source ~/unitree_ros2/setup_local.sh # use "lo" as the network interface
-```
-or
-```bash
-source ~/unitree_ros2/setup_default.sh # No network network interface specified 
+source setup_local.bash # use "lo" as the network interface
 ```
 
 
@@ -67,10 +60,9 @@ After completing the above configuration, it is recommended to restart the compu
 
 Ensure that the network of robot is connected correctly, open a terminal and input:  
 ```bash
-source ~/unitree_ros2/setup.sh
+source setup.bash
 ros2 topic list
 ```
-
 
 
 If you have any problem in seeing, listening the topic, maybe it's the firewall.
@@ -90,21 +82,21 @@ sudo ufw allow from 192.168.123.161 to any port 7400:65535 proto udp
 
 ### 3. Running the hal
 
-The source code of examples locates at `/example/src/src`.
+The source code of the hal is located at `/hal/src/hal`.
 
 Open a terminal and input:
 ```bash
-source ~/unitree_ros2/setup.sh
-cd ~/unitree_ros2/example
-colcon build
+source setup.bash
+cd hal
+colcon build --packages-select dls2_msgs
+colcon build --packages-select hal
 ```
 After compilation, run in the terminal:
 ```bash
-./install/unitree_ros2_example/bin/robot_hal 
+./install/hal/bin/robot_hal 
 ```
 
-
-You can even use 
+You can even use
 ```bash
 python3 launch_hal.py
 ```

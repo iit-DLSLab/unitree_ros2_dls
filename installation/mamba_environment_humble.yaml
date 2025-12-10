@@ -1,0 +1,23 @@
+name: unitree_ros2_humble_env
+channels:
+- conda-forge
+- nvidia
+- robostack-humble
+dependencies:
+- pip
+- python
+- numpy
+- cuda-nvcc 
+- ros-humble-desktop
+- ros-humble-plotjuggler-ros
+- ros-humble-rmw-cyclonedds-cpp
+- ros-humble-rosidl-generator-dds-idl
+- compilers 
+- cmake 
+- pkg-config 
+- make 
+- ninja 
+- colcon-common-extensions 
+- catkin_tools 
+- rosdep
+- tqdm

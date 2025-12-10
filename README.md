@@ -93,7 +93,7 @@ Open a terminal and input:
 ```bash
 source setup.bash
 cd hal
-colcon build --packages-select dls2_msgs
+colcon build --packages-select dls2_interface
 source install/setup.bash
 colcon build --packages-select hal
 ```

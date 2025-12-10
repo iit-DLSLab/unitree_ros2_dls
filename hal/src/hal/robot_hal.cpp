@@ -12,10 +12,10 @@
 #include "g1/g1_motion_switch_client.hpp"
 
 // DLS2 related message
-#include "dls2_msgs/msg/imu_msg.hpp"
-#include "dls2_msgs/msg/base_state_msg.hpp"
-#include "dls2_msgs/msg/blind_state_msg.hpp"
-#include "dls2_msgs/msg/trajectory_generator_msg.hpp"
+#include "dls2_interface/msg/imu.hpp"
+#include "dls2_interface/msg/base_state.hpp"
+#include "dls2_interface/msg/blind_state.hpp"
+#include "dls2_interface/msg/trajectory_generator.hpp"
 
 // Not sure is these defines are necessary
 #define TOPIC_LOWCMD "/lowcmd"
@@ -35,7 +35,7 @@ class LowLevelCmdNode : public rclcpp::Node {
   private:
     void InitLowCmd();
     void LowStateMessageHandler(unitree_go::msg::LowState::SharedPtr msg);
-    void TrajectoryGeneratorMessageHandler(dls2_msgs::msg::TrajectoryGeneratorMsg::SharedPtr msg);
+    void TrajectoryGeneratorMessageHandler(dls2_interface::msg::TrajectoryGenerator::SharedPtr msg);
     void LowCmdWrite();
 
 
@@ -53,13 +53,13 @@ class LowLevelCmdNode : public rclcpp::Node {
     rclcpp::TimerBase::SharedPtr timer_;
 
     // DLS2 related publisher and subscriber
-    dls2_msgs::msg::ImuMsg imu_;              // default init
-    dls2_msgs::msg::BlindStateMsg blind_state_; // default init
-    dls2_msgs::msg::TrajectoryGeneratorMsg trajectory_generator_; // default init
+    dls2_interface::msg::Imu imu_;              // default init
+    dls2_interface::msg::BlindState blind_state_; // default init
+    dls2_interface::msg::TrajectoryGenerator trajectory_generator_; // default init
 
-    rclcpp::Publisher<dls2_msgs::msg::ImuMsg>::SharedPtr imu_pub_;
-    rclcpp::Publisher<dls2_msgs::msg::BlindStateMsg>::SharedPtr blind_state_pub_;
-    rclcpp::Subscription<dls2_msgs::msg::TrajectoryGeneratorMsg>::SharedPtr trajectory_generator_sub_;
+    rclcpp::Publisher<dls2_interface::msg::Imu>::SharedPtr imu_pub_;
+    rclcpp::Publisher<dls2_interface::msg::BlindState>::SharedPtr blind_state_pub_;
+    rclcpp::Subscription<dls2_interface::msg::TrajectoryGenerator>::SharedPtr trajectory_generator_sub_;
 
 };
 
@@ -102,10 +102,10 @@ void LowLevelCmdNode::Init() {
       });
   
   // Create publishers and subscribers to talk with the controller/DLS2
-  imu_pub_ = this->create_publisher<dls2_msgs::msg::ImuMsg>("/dls2/imu", 1);
-  blind_state_pub_ = this->create_publisher<dls2_msgs::msg::BlindStateMsg>("/dls2/blind_state", 1);
-  trajectory_generator_sub_ = this->create_subscription<dls2_msgs::msg::TrajectoryGeneratorMsg>(
-      "/dls2/trajectory_generator", 1, [this](const dls2_msgs::msg::TrajectoryGeneratorMsg::SharedPtr msg) {
+  imu_pub_ = this->create_publisher<dls2_interface::msg::Imu>("/dls2/imu", 1);
+  blind_state_pub_ = this->create_publisher<dls2_interface::msg::BlindState>("/dls2/blind_state", 1);
+  trajectory_generator_sub_ = this->create_subscription<dls2_interface::msg::TrajectoryGenerator>(
+      "/dls2/trajectory_generator", 1, [this](const dls2_interface::msg::TrajectoryGenerator::SharedPtr msg) {
         TrajectoryGeneratorMessageHandler(msg);
       });
 
@@ -198,7 +198,7 @@ void LowLevelCmdNode::LowStateMessageHandler(
 
 // Subscribe to DLS2 trajectory generator message and publish low level command to Unitree
 void LowLevelCmdNode::TrajectoryGeneratorMessageHandler(
-    const dls2_msgs::msg::TrajectoryGeneratorMsg::SharedPtr msg) {
+    const dls2_interface::msg::TrajectoryGenerator::SharedPtr msg) {
 
   trajectory_generator_ = *msg;
   

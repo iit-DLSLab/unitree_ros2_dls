@@ -22,7 +22,7 @@ link_directories(src)
 set (
   DEPENDENCY_LIST
   unitree_go
-  dls2_msgs
+  dls2_interface
   unitree_hg
   unitree_api
   rclcpp
@@ -33,7 +33,7 @@ set (
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(unitree_go REQUIRED)
-find_package(dls2_msgs REQUIRED)
+find_package(dls2_interface REQUIRED)
 find_package(unitree_hg REQUIRED)
 find_package(unitree_api REQUIRED)
 find_package(rclcpp REQUIRED)

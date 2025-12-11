@@ -102,10 +102,10 @@ void LowLevelCmdNode::Init() {
       });
   
   // Create publishers and subscribers to talk with the controller/DLS2
-  imu_pub_ = this->create_publisher<dls2_interface::msg::Imu>("/dls2/imu", 1);
-  blind_state_pub_ = this->create_publisher<dls2_interface::msg::BlindState>("/dls2/blind_state", 1);
+  imu_pub_ = this->create_publisher<dls2_interface::msg::Imu>("/imu", 1);
+  blind_state_pub_ = this->create_publisher<dls2_interface::msg::BlindState>("/blind_state", 1);
   trajectory_generator_sub_ = this->create_subscription<dls2_interface::msg::TrajectoryGenerator>(
-      "/dls2/trajectory_generator", 1, [this](const dls2_interface::msg::TrajectoryGenerator::SharedPtr msg) {
+      "/trajectory_generator", 1, [this](const dls2_interface::msg::TrajectoryGenerator::SharedPtr msg) {
         TrajectoryGeneratorMessageHandler(msg);
       });
 

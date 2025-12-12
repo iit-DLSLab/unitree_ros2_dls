@@ -12,5 +12,5 @@ float64[12] joints_acceleration
 float64[12] joints_effort
 float64[12] joints_temperature
 
-float64[4] feet_contact
+bool[4] feet_contact
 float64[12] current_feet_positions

@@ -93,12 +93,11 @@ Open a terminal and input:
 ```bash
 source setup.bash
 cd hal
-colcon build --packages-select dls2_msgs
-source install/setup.bash
-colcon build --packages-select hal
+colcon build 
 ```
 After compilation, run in the terminal:
 ```bash
+source /install/setup.bash
 ./install/hal/bin/robot_hal 
 ```
 

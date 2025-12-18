@@ -41,12 +41,12 @@ find_package(std_msgs REQUIRED)
 find_package(rosbag2_cpp REQUIRED)
 find_package(Eigen3 REQUIRED)
 
-add_executable(robot_hal robot_hal.cpp ./../../../unitree_ros2/example/src/src/common/motor_crc.cpp)
+add_executable(quadruped_hal quadruped_hal.cpp ./../../../unitree_ros2/example/src/src/common/motor_crc.cpp)
 
-ament_target_dependencies(robot_hal ${DEPENDENCY_LIST})
+ament_target_dependencies(quadruped_hal ${DEPENDENCY_LIST})
 
 install(TARGETS 
-        robot_hal
+        quadruped_hal
         DESTINATION)
 
 

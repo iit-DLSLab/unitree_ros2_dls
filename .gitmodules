@@ -1,3 +1,9 @@
 [submodule "unitree_ros2"]
 	path = unitree_ros2
 	url = https://github.com/unitreerobotics/unitree_ros2.git
+[submodule "unitree_z1/z1_controller"]
+	path = unitree_z1/z1_controller
+	url = https://github.com/unitreerobotics/z1_controller.git
+[submodule "unitree_z1/z1_sdk"]
+	path = unitree_z1/z1_sdk
+	url = https://github.com/unitreerobotics/z1_sdk.git

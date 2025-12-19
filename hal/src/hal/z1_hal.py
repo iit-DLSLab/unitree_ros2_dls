@@ -40,8 +40,7 @@ class Z1HALNode(Node):
 
 
     def get_arm_trajectory_generator_callback(self, msg):
-
-        print("self.desired_arm_joints_torque before:", self.desired_arm_joints_torque)
+        
         self.arm.setArmCmd(np.array(msg.desired_arm_joints_position), np.array(msg.desired_arm_joints_velocity), self.desired_arm_joints_torque)
         self.arm.setGripperCmd(msg.desired_arm_gripper_position, msg.desired_arm_gripper_velocity, self.desired_gripper_torque)
         self.arm._ctrlComp.lowcmd.setControlGain(np.array(msg.arm_kp), np.array(msg.arm_kd))

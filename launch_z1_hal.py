@@ -14,5 +14,5 @@ else:
     print("HAL already built - if you have any modifications, please delete the build folder in the submodule")
     print("\n\n")
     time.sleep(2)
-    os.system("bash -c 'source setup.bash && source hal/install/setup.bash && ./hal/install/hal/bin/z1_hal'")
+    os.system("bash -c 'source setup.bash && source hal/install/setup.bash && python3 hal/src/hal/z1_hal.py'")
 

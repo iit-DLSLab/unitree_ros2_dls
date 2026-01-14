@@ -82,18 +82,18 @@ sudo ufw allow from 192.168.123.161 to any port 7400:65535 proto udp
 
 ### 3. Running the hal
 
-The source code of the hal is located at `/hal/src/hal`.
+The source code of the hal is located at `/ros2_ws/src/quadruped_hal`.
 
 Open a terminal and input:
 ```bash
 source setup.bash
-cd hal
+cd ros2_ws
 colcon build 
 ```
 After compilation, run in the terminal:
 ```bash
 source /install/setup.bash
-./install/hal/bin/robot_hal 
+./install/quadruped_hal/bin/quadruped_hal 
 ```
 
 You can even use

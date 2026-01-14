@@ -27,3 +27,14 @@ source install/setup.bash
 
 ## RUN
 
+1. Go inside unitree_z1/z1_controller/build and press:
+
+```bash
+./z1_ctrl
+```
+
+
+2. Run the hal
+```bash
+python3 ros2_ws/src/z1_hal/z1_hal.py
+```

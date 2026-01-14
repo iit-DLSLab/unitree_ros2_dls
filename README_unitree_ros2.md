@@ -1,8 +1,3 @@
-# Introduction
-This repo uses [unitree_ros2](https://github.com/unitreerobotics/unitree_ros2) from unitree. It's just adding some new messages and a complete robot_hal script to talk with the robot, compatible with some **dls controllers and state estimators**, like [basic-locomotion-dls-isaaclab](https://github.com/iit-DLSLab/basic-locomotion-dls-isaaclab), and soon [Quadruped-PyMPC](https://github.com/iit-DLSLab/Quadruped-PyMPC) and [muse](https://github.com/iit-DLSLab/muse).
-
-
-
 ## Install Unitree ROS2 package
 
 ### 1. Dependencies

@@ -7,9 +7,9 @@ We add on top of these some new messages and a complete robot_hal script to talk
 
 ## Unitree ROS2 package
 
-Follow [README_unitree_ros2](https://github.com/iit-DLSLab/unitree_ros2_dls/blob/feature/z1/README_unitree_ros2.md) 
+Follow [README_unitree_ros2](https://github.com/iit-DLSLab/unitree_ros2_dls/blob/feature/z1/README_unitree_ros2.md) to install the thing needed for GO2, B2, A2.
 
 
 ## Z1 sdk/controller packages
 
-otherwise on [README_unitree_z1](https://github.com/iit-DLSLab/unitree_ros2_dls/blob/feature/z1/README_unitree_unitree_z1.md).
+Follow [README_unitree_z1](https://github.com/iit-DLSLab/unitree_ros2_dls/blob/feature/z1/README_unitree_unitree_z1.md) to install the thing needed for Z1.

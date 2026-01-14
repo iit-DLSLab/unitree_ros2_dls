@@ -5,6 +5,20 @@ We add on top of these some new messages and a complete robot_hal script to talk
 
 
 
+### Dependencies
+The main dependencies other ros-humble are
+```bash
+ros-humble-rmw-cyclonedds-cpp
+ros-humble-rosidl-generator-dds-idl
+```
+An example of conda environment containing these dependencies can be found in the folder installation, which can be used by doing
+
+```bash
+conda env create -f mamba_environment.yml
+conda activate unitree_ros2_humble_env
+```
+
+
 ## Unitree ROS2 package
 
 Follow [README_unitree_ros2](https://github.com/iit-DLSLab/unitree_ros2_dls/blob/feature/z1/README_unitree_ros2.md) to install the thing needed for GO2, B2, A2.

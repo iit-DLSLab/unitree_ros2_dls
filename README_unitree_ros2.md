@@ -1,19 +1,7 @@
 ## Install Unitree ROS2 package
 
-### 1. Dependencies
-The main dependencies other ros-humble are
-```bash
-ros-humble-rmw-cyclonedds-cpp
-ros-humble-rosidl-generator-dds-idl
-```
-An example of conda environment containing these dependencies can be found in the folder installation, which can be used by doing
 
-```bash
-conda env create -f mamba_environment.yml
-conda activate unitree_ros2_humble_env
-```
-
-### 2. Compile unitree packages packages
+1. Compile unitree packages packages
 First, compile unitree stuff:
 
 ```bash
@@ -23,10 +11,10 @@ colcon build # Compile all packages in the workspace
 source install/setup.bash
 ```
 
-## Connect to Unitree robot
 
-### 1. Network configuration
-Connect Unitree robot and the computer using Ethernet cable. Then, use ifconfig to view the network interface that the robot connected. 
+## Network configuration
+
+1. Connect Unitree robot and the computer using Ethernet cable. Then, use ifconfig to view the network interface that the robot connected. 
 
 Next, open the network settings, find the network interface that the robot connected. In IPv4 setting, **change the IPv4 mode to manual, set the address to 192.168.123.99, and set the mask to 255.255.255.0**. After completion, click apply and wait for the network to reconnect.
 
@@ -55,8 +43,7 @@ source setup_local.bash # use "lo" as the network interface
 ```
 
 
-### 2. Connect and test
-After completing the above configuration, it is recommended to restart the computer before conducting the test.
+2. After completing the above configuration, it is recommended to restart the computer before conducting the test.
 
 Ensure that the network of robot is connected correctly, open a terminal and input:  
 ```bash
@@ -80,7 +67,7 @@ sudo ufw allow from 192.168.123.161 to any port 7400:65535 proto udp
 ```
 
 
-### 3. Running the hal
+## Running the hal
 
 The source code of the hal is located at `/ros2_ws/src/quadruped_hal`.
 

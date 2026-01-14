@@ -5,7 +5,7 @@ We add on top of these some new messages and a complete robot_hal script to talk
 
 
 
-### Dependencies
+## Dependencies
 The main dependencies other ros-humble are
 ```bash
 ros-humble-rmw-cyclonedds-cpp
@@ -18,6 +18,7 @@ conda env create -f mamba_environment.yml
 conda activate unitree_ros2_humble_env
 ```
 
+Be sure to have these before proceeding!
 
 ## Unitree ROS2 package
 

@@ -71,7 +71,7 @@ sudo ufw allow from 192.168.123.161 to any port 7400:65535 proto udp
 ```
 
 
-## Running the hal
+## Running the quadruped hal
 
 The source code of the hal is located at `/ros2_ws/src/quadruped_hal`.
 

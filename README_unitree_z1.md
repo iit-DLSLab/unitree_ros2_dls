@@ -25,7 +25,7 @@ colcon build --packages-select dls2_interface
 source install/setup.bash
 ```
 
-## RUN
+## Running the z1 hal
 
 1. Go inside unitree_z1/z1_controller/build and press:
 

@@ -1,5 +1,5 @@
 
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.15)
 project(dls2_interface)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -19,6 +19,9 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/FeetContactState.msg"
   "msg/TrajectoryGenerator.msg"
   "msg/ControlSignal.msg"
+  "msg/ArmState.msg"
+  "msg/ArmTrajectoryGenerator.msg"
+  "msg/ArmControlSignal.msg"
 )
 
 ament_export_dependencies(rosidl_default_runtime)

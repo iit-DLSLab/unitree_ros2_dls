@@ -22,7 +22,7 @@ Next, open the network settings, find the network interface that the robot conne
 
 Open setup.sh file.
 ```bash
-sudo gedit setup.bash
+sudo gedit ros2_connect.bash
 ```
 ```bash
 #!/bin/bash
@@ -36,14 +36,14 @@ Modify it to the corresponding network interface according to the actual situati
 
 Source the environment to setup the ROS2 support of Unitree robot: 
 ```bash
-source setup.bash
+source ros2_connect.bash
 ```
 
 <!--**IMPORTANT**. Until further improvement, this will make you communicate with the robot using DOMAIN ID=0, so disconnect the wifi in order not to see other topics from other people over the net!-->
 
 If your computer is not connected to the robot but you still want to use Unitree ROS2 for simulation and other functions, you can use the local loopback "lo" as the network interface.
 ```bash
-source setup_local.bash # use "lo" as the network interface
+source ros2_localhost_connect.bash # use "lo" as the network interface
 ```
 
 
@@ -51,7 +51,7 @@ source setup_local.bash # use "lo" as the network interface
 
 Ensure that the network of robot is connected correctly, open a terminal and input:  
 ```bash
-source setup.bash
+source ros2_connect.bash
 ros2 topic list
 ```
 
@@ -77,7 +77,7 @@ The source code of the hal is located at `/ros2_ws/src/quadruped_hal`.
 
 Open a terminal and input:
 ```bash
-source setup.bash
+source ros2_connect.bash
 cd ros2_ws
 colcon build 
 ```

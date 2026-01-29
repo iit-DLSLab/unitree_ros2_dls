@@ -89,6 +89,6 @@ source /install/setup.bash
 
 You can even use
 ```bash
-python3 launch_hal.py
+python3 launch_quadruped_hal.py
 ```
 

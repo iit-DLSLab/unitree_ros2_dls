@@ -11,6 +11,8 @@ colcon build # Compile all packages in the workspace
 source install/setup.bash
 ```
 
+If you have any problem complaining **rosidl_generate_interfaces** (likely), search globally from **cmake_minimum_required(VERSION** and bump each version to 3.15
+
 
 ## Network configuration
 

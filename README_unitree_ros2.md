@@ -39,6 +39,8 @@ Source the environment to setup the ROS2 support of Unitree robot:
 source setup.bash
 ```
 
+**IMPORTANT**. Until further improvement, this will make you communicate with the robot using DOMAIN ID=0, so disconnect the wifi in order not to see other topics from other people over the net!
+
 If your computer is not connected to the robot but you still want to use Unitree ROS2 for simulation and other functions, you can use the local loopback "lo" as the network interface.
 ```bash
 source setup_local.bash # use "lo" as the network interface

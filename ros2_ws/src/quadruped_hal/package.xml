@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="" schematypens=""?>
 <package format="3">
-  <name>hal</name>
+  <name>quadruped_hal</name>
   <version>0.0.0</version>
-  <description>Uniree ros2 example</description>
+  <description>Uniree ros2 hal</description>
   <maintainer email="unitree@unitree.com">Unitree</maintainer>
   <license>BSD 3-Clause License</license>
 

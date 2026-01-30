@@ -14,5 +14,5 @@ else:
     print("HAL already built - if you have any modifications, please delete the build folder in the submodule")
     print("\n\n")
     time.sleep(2)
-    os.system("bash -c 'source setup.bash && source ros2_ws/install/setup.bash && ./ros2_ws/install/quadruped_hal/bin/quadruped_hal'")
+    os.system("bash -c 'source ros2_connect.bash && source ros2_ws/install/setup.bash && ./ros2_ws/install/quadruped_hal/bin/quadruped_hal'")
 

@@ -5,12 +5,12 @@ float64 timestamp
 
 string robot_name
 
-string[12] joints_name
-float64[12] joints_position
-float64[12] joints_velocity
-float64[12] joints_acceleration
-float64[12] joints_effort
-float64[12] joints_temperature
+string[] joints_name
+float64[] joints_position
+float64[] joints_velocity
+float64[] joints_acceleration
+float64[] joints_effort
+float64[] joints_temperature
 
-bool[4] feet_contact
-float64[12] current_feet_positions
+bool[] feet_contact
+float64[] current_feet_positions

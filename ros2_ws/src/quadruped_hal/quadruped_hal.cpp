@@ -155,6 +155,10 @@ void LowLevelCmdNode::LowStateMessageHandler(
 
 
   // Publish DLS2 blind state message
+  blind_state_.joints_position.resize(12);
+  blind_state_.joints_velocity.resize(12);
+  blind_state_.joints_acceleration.resize(12);
+  blind_state_.joints_effort.resize(12);
   // First motors state is FR
   for (int i = 0; i < 3; i++) {
     motor_[i] = low_state_.motor_state[i];

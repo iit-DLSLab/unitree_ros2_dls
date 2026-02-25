@@ -14,5 +14,5 @@ else:
     print("msg already built - if you have any modifications, please delete the build folder in the submodule")
     print("\n\n")
     time.sleep(2)
-    os.system("bash -c 'source setup.bash && source ros2_ws/install/setup.bash && python3 ros2_ws/src/z1_hal/z1_hal.py'")
+    os.system("bash -c 'source ros2_ws/install/setup.bash && python3 ros2_ws/src/z1_hal/z1_hal.py'")
 

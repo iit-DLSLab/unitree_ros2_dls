@@ -22,9 +22,9 @@ Be sure to have these before proceeding!
 
 ## Unitree ROS2 package
 
-Follow [README_unitree_ros2](https://github.com/iit-DLSLab/unitree_ros2_dls/blob/feature/z1/README_unitree_ros2.md) to install the thing needed for GO2, B2, A2.
+Follow [README_unitree_ros2](https://github.com/iit-DLSLab/unitree_ros2_dls/blob/main/README_unitree_ros2.md) to install the thing needed for GO2, B2, A2.
 
 
 ## Z1 sdk/controller packages
 
-Follow [README_unitree_z1](https://github.com/iit-DLSLab/unitree_ros2_dls/blob/feature/z1/README_unitree_z1.md) to install the thing needed for Z1.
+Follow [README_unitree_z1](https://github.com/iit-DLSLab/unitree_ros2_dls/blob/main/README_unitree_z1.md) to install the thing needed for Z1.

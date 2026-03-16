@@ -144,9 +144,11 @@ void LowLevelCmdNode::LowStateMessageHandler(
 
 
   // Publish DLS2 IMU message
-  for (int i = 0; i < 4; i++) {
-    imu_.orientation[i] = low_state_.imu_state.quaternion[i];
-  }
+  // We use xywz convention
+  imu_.orientation[0] = low_state_.imu_state.quaternion[1]; 
+  imu_.orientation[1] = low_state_.imu_state.quaternion[2];
+  imu_.orientation[2] = low_state_.imu_state.quaternion[3];
+  imu_.orientation[3] = low_state_.imu_state.quaternion[0];
   for (int i = 0; i < 3; i++) {
     imu_.angular_velocity[i] = low_state_.imu_state.gyroscope[i];
     imu_.linear_acceleration[i] = low_state_.imu_state.accelerometer[i];

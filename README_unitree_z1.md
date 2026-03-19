@@ -38,7 +38,7 @@ source install/setup.bash
 
 ```bash
 python3 launch_z1_controller.py
-```
+````
 
 **(TERMINAL 2)** From the repo root, start the HAL node:
 

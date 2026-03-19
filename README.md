@@ -14,7 +14,7 @@ ros-humble-rosidl-generator-dds-idl
 An example of conda environment containing these dependencies can be found in the folder installation, which can be used by doing
 
 ```bash
-conda env create -f mamba_environment.yml
+conda env create -f installation/mamba_environment_humble.yaml
 conda activate unitree_ros2_humble_env
 ```
 

@@ -1,40 +1,47 @@
 ## Install Z1 sdk and controller packages
 
-1. Go inside unitree_z1/z1_controller and press:
+First, initialise the submodules (required before any cmake step):
 
 ```bash
-mkdir build
-cd build
+git submodule update --init --recursive
+```
+
+1. Go inside `unitree_z1/z1_controller` and build:
+
+```bash
+cd unitree_z1/z1_controller
+mkdir build && cd build
 cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 ..
 make -j4
 ```
 
-
-2. Go inside unitree_z1/z1_sdk and press:
+2. Go inside `unitree_z1/z1_sdk` and build:
 
 ```bash
-mkdir build
-cd build
+cd ../../z1_sdk
+mkdir build && cd build
 cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 ..
 make -j4
 ```
 
-3. Go inside ros2_ws
+3. Build the ROS2 messages from the repo root:
+
 ```bash
+cd ../../ros2_ws
 colcon build --packages-select dls2_interface
 source install/setup.bash
 ```
 
-## Running the z1 hal
+## Running the Z1 HAL
 
-1. Go inside unitree_z1/z1_controller/build and press:
+**(TERMINAL 1)** From the repo root, start the Z1 controller:
 
 ```bash
-./z1_ctrl
-```
+python3 launch_z1_controller.py
+````
 
+**(TERMINAL 2)** From the repo root, start the HAL node:
 
-2. Run the hal
 ```bash
-python3 ros2_ws/src/z1_hal/z1_hal.py
+python3 launch_z1_hal.py
 ```

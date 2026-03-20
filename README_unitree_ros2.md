@@ -77,17 +77,10 @@ The source code of the hal is located at `/ros2_ws/src/quadruped_hal`.
 Open a terminal and input:
 ```bash
 source ros2_connect.bash
-cd ros2_ws
-colcon build 
 ```
 After compilation, run in the terminal:
 ```bash
-source /install/setup.bash
-./install/quadruped_hal/bin/quadruped_hal 
+python3 launch_quadruped_hal.py 
 ```
 
-You can even use
-```bash
-python3 launch_quadruped_hal.py
-```
 

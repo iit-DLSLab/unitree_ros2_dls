@@ -32,23 +32,11 @@ export CYCLONEDDS_URI='<CycloneDDS><Domain><General><Interfaces>
                         </Interfaces></General></Domain></CycloneDDS>'
 ```
 where "enp3s0" is the network interface name of unitree robot connected.
-Modify it to the corresponding network interface according to the actual situation. 
-
-Source the environment to setup the ROS2 support of Unitree robot: 
-```bash
-source ros2_connect.bash
-```
+**Modify it to the corresponding network interface according to the actual situation. You can check it typing ifconfig**. 
 
 
-If your computer is not connected to the robot but you still want to use Unitree ROS2 for simulation and other functions, you can use the local loopback "lo" as the network interface.
-```bash
-source ros2_localhost_connect.bash # use "lo" as the network interface
-```
 
-
-2. After completing the above configuration, it is recommended to restart the computer before conducting the test.
-
-Ensure that the network of robot is connected correctly, open a terminal and input:  
+2. Ensure that the network of robot is connected correctly, open a terminal and input:  
 ```bash
 source ros2_connect.bash
 ros2 topic list

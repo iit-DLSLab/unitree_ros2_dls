@@ -12,9 +12,9 @@ ros-humble-rmw-cyclonedds-cpp
 ros-humble-rosidl-generator-dds-idl
 ```
 
-**Note that if you are using one of our other repos with conda, you will likely have them and you just need to activate the env!**
+**Note that if you are using one of our other repos with conda, you will likely have them installed. In that case, just activate that conda env!**
 
-Otherwise, an example of conda environment containing these dependencies can be found in the folder installation, which can be used by doing
+Otherwise, an example of conda environment containing these dependencies can be found in the folder installation, which can be installed by doing
 
 ```bash
 conda env create -f installation/mamba_environment_humble.yaml

@@ -11,14 +11,17 @@ The main dependencies other ros-humble are
 ros-humble-rmw-cyclonedds-cpp
 ros-humble-rosidl-generator-dds-idl
 ```
-An example of conda environment containing these dependencies can be found in the folder installation, which can be used by doing
+
+**Note that if you are using one of our other repos with conda, you will likely have them and you just need to activate the env!**
+
+Otherwise, an example of conda environment containing these dependencies can be found in the folder installation, which can be used by doing
 
 ```bash
 conda env create -f installation/mamba_environment_humble.yaml
 conda activate unitree_ros2_humble_env
 ```
 
-Be sure to have these before proceeding!
+Be sure to have these before proceeding. 
 
 ## Unitree ROS2 package
 

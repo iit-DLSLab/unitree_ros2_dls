@@ -43,7 +43,11 @@ class Z1HALNode(Node):
         
         self.arm.setArmCmd(np.array(msg.desired_arm_joints_position), np.array(msg.desired_arm_joints_velocity), self.desired_arm_joints_torque)
         self.arm.setGripperCmd(msg.desired_arm_gripper_position, msg.desired_arm_gripper_velocity, self.desired_gripper_torque)
-        self.arm._ctrlComp.lowcmd.setControlGain(np.array(msg.arm_kp), np.array(msg.arm_kd))
+        
+        # control gain - these values are divided for two constants since in the low-level
+        # since in the unitree low-level control these constants are multiplied..
+        # see https://support.unitree.com/home/en/Z1_developer/sdk_intro sec. 2.2.3
+        self.arm._ctrlComp.lowcmd.setControlGain(np.array(msg.arm_kp)/25.6, np.array(msg.arm_kd)/0.0128)
 
 
     def get_arm_control_signal_callback(self, msg):

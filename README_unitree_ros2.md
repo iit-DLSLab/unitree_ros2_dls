@@ -66,6 +66,8 @@ Open a terminal and input:
 ```bash
 source ros2_connect.bash
 ```
+**Note that in every terminal where you launch your other scripts, you need to source this file first. Put it in .bashrc as an alias!**
+
 After compilation, run in the terminal:
 ```bash
 python3 launch_quadruped_hal.py 

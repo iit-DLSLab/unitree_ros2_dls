@@ -5,7 +5,7 @@ We add on top of these some new messages and a complete robot_hal script to talk
 
 - [basic-locomotion-dls-isaaclab](https://github.com/iit-DLSLab/basic-locomotion-dls-isaaclab) for RL
 - [Quadruped-PyMPC](https://github.com/iit-DLSLab/Quadruped-PyMPC) for MPC
-- [muse](https://github.com/iit-DLSLab/muse/tree/unitree_sdk) for State Estimator
+- [muse](https://github.com/iit-DLSLab/muse/tree/unitree_sdk) for State Estimation
 
 
 ## Dependencies

@@ -1,12 +1,15 @@
 # Introduction
 This repo uses [unitree_ros2](https://github.com/unitreerobotics/unitree_ros2) from unitree for controlling GO2, B2, Aliengo, and [z1_sdk](https://github.com/iit-DLSLab/z1_sdk)/[z1_controller](https://github.com/unitreerobotics/z1_controller) for the Z1 arm. 
 
-We add on top of these some new messages and a complete robot_hal script to talk with the robots in **ROS2**, compatible with some **dls controllers and state estimators**, like [basic-locomotion-dls-isaaclab](https://github.com/iit-DLSLab/basic-locomotion-dls-isaaclab), and soon [Quadruped-PyMPC](https://github.com/iit-DLSLab/Quadruped-PyMPC) and [muse](https://github.com/iit-DLSLab/muse).
+We add on top of these some new messages and a complete robot_hal script to talk with the robots in **ROS2**, **fully compatible** with different **dls controllers and state estimators**, like: 
 
+- [basic-locomotion-dls-isaaclab](https://github.com/iit-DLSLab/basic-locomotion-dls-isaaclab) for RL
+- [Quadruped-PyMPC](https://github.com/iit-DLSLab/Quadruped-PyMPC) for MPC
+- [muse](https://github.com/iit-DLSLab/muse/tree/unitree_sdk) for State Estimator
 
 
 ## Dependencies
-The main dependencies other ros-humble are
+The main dependencies other than ros-humble are
 ```bash
 ros-humble-rmw-cyclonedds-cpp
 ros-humble-rosidl-generator-dds-idl

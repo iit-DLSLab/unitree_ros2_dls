@@ -34,3 +34,7 @@ Follow [README_unitree_ros2](https://github.com/iit-DLSLab/unitree_ros2_dls/blob
 ## Z1 sdk/controller packages
 
 Follow [README_unitree_z1](https://github.com/iit-DLSLab/unitree_ros2_dls/blob/main/README_unitree_z1.md) to install the thing needed for Z1.
+
+## Maintainer
+
+This repository is maintained by [Giulio Turrisi](https://github.com/giulioturrisi).

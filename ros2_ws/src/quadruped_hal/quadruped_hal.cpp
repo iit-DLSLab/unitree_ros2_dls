@@ -222,7 +222,7 @@ void LowLevelCmdNode::TrajectoryGeneratorMessageHandler(
     low_cmd_.motor_cmd[i+3].dq = trajectory_generator_.joints_velocity[i];
     low_cmd_.motor_cmd[i+3].kp = trajectory_generator_.kp[i];
     low_cmd_.motor_cmd[i+3].kd = trajectory_generator_.kd[i];
-    low_cmd_.motor_cmd[i+3].tau = 0;
+    //low_cmd_.motor_cmd[i+3].tau = 0;
   }
   
   // Second motors state is FL
@@ -231,7 +231,7 @@ void LowLevelCmdNode::TrajectoryGeneratorMessageHandler(
     low_cmd_.motor_cmd[i-3].dq = trajectory_generator_.joints_velocity[i];
     low_cmd_.motor_cmd[i-3].kp = trajectory_generator_.kp[i];
     low_cmd_.motor_cmd[i-3].kd = trajectory_generator_.kd[i];
-    low_cmd_.motor_cmd[i-3].tau = 0;
+    //.motor_cmd[i-3].tau = 0;
   }
 
   // Third motors state is RR
@@ -240,7 +240,7 @@ void LowLevelCmdNode::TrajectoryGeneratorMessageHandler(
     low_cmd_.motor_cmd[i+3].dq = trajectory_generator_.joints_velocity[i];
     low_cmd_.motor_cmd[i+3].kp = trajectory_generator_.kp[i];
     low_cmd_.motor_cmd[i+3].kd = trajectory_generator_.kd[i];
-    low_cmd_.motor_cmd[i+3].tau = 0;
+    //low_cmd_.motor_cmd[i+3].tau = 0;
   }
 
   // Fourth motors state is RL
@@ -249,7 +249,7 @@ void LowLevelCmdNode::TrajectoryGeneratorMessageHandler(
     low_cmd_.motor_cmd[i-3].dq = trajectory_generator_.joints_velocity[i];
     low_cmd_.motor_cmd[i-3].kp = trajectory_generator_.kp[i];
     low_cmd_.motor_cmd[i-3].kd = trajectory_generator_.kd[i];
-    low_cmd_.motor_cmd[i-3].tau = 0;
+    //low_cmd_.motor_cmd[i-3].tau = 0;
   }
 
     //get_crc(low_cmd_);  // Check motor cmd crc

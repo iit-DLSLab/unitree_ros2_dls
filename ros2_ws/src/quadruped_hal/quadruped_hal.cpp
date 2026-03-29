@@ -16,6 +16,7 @@
 #include "dls2_interface/msg/base_state.hpp"
 #include "dls2_interface/msg/blind_state.hpp"
 #include "dls2_interface/msg/trajectory_generator.hpp"
+#include "dls2_interface/msg/control_signal.hpp"
 
 // Not sure is these defines are necessary
 #define TOPIC_LOWCMD "/lowcmd"
@@ -36,6 +37,7 @@ class LowLevelCmdNode : public rclcpp::Node {
     void InitLowCmd();
     void LowStateMessageHandler(unitree_go::msg::LowState::SharedPtr msg);
     void TrajectoryGeneratorMessageHandler(dls2_interface::msg::TrajectoryGenerator::SharedPtr msg);
+    void ControlSignalMessageHandler(dls2_interface::msg::ControlSignal::SharedPtr msg);
     void LowCmdWrite();
 
 
@@ -56,10 +58,12 @@ class LowLevelCmdNode : public rclcpp::Node {
     dls2_interface::msg::Imu imu_;              // default init
     dls2_interface::msg::BlindState blind_state_; // default init
     dls2_interface::msg::TrajectoryGenerator trajectory_generator_; // default init
+    dls2_interface::msg::ControlSignal control_signal_; // default init
 
     rclcpp::Publisher<dls2_interface::msg::Imu>::SharedPtr imu_pub_;
     rclcpp::Publisher<dls2_interface::msg::BlindState>::SharedPtr blind_state_pub_;
     rclcpp::Subscription<dls2_interface::msg::TrajectoryGenerator>::SharedPtr trajectory_generator_sub_;
+    rclcpp::Subscription<dls2_interface::msg::ControlSignal>::SharedPtr control_signal_sub_;
 
 };
 
@@ -107,6 +111,10 @@ void LowLevelCmdNode::Init() {
   trajectory_generator_sub_ = this->create_subscription<dls2_interface::msg::TrajectoryGenerator>(
       "/trajectory_generator", 1, [this](const dls2_interface::msg::TrajectoryGenerator::SharedPtr msg) {
         TrajectoryGeneratorMessageHandler(msg);
+      });
+  control_signal_sub_ = this->create_subscription<dls2_interface::msg::ControlSignal>(
+      "/control_signal", 1, [this](const dls2_interface::msg::ControlSignal::SharedPtr msg) {
+        ControlSignalMessageHandler(msg);
       });
 
 }
@@ -246,6 +254,33 @@ void LowLevelCmdNode::TrajectoryGeneratorMessageHandler(
 
     //get_crc(low_cmd_);  // Check motor cmd crc
     //low_cmd_pub_->publish(low_cmd_);
+
+}
+
+void LowLevelCmdNode::ControlSignalMessageHandler(
+    const dls2_interface::msg::ControlSignal::SharedPtr msg) {
+  
+  control_signal_ = *msg;
+  
+  // First motors state is FR
+  for (int i = 0; i < 3; i++) {    
+    low_cmd_.motor_cmd[i+3].tau = control_signal_.torques[i];
+  }
+  
+  // Second motors state is FL
+  for (int i = 3; i < 6; i++) {  
+    low_cmd_.motor_cmd[i-3].tau = control_signal_.torques[i];
+  }
+
+  // Third motors state is RR
+  for (int i = 6; i < 9; i++) {  
+    low_cmd_.motor_cmd[i+3].tau = control_signal_.torques[i];
+  }
+
+  // Fourth motors state is RL
+  for (int i = 9; i < 12; i++) {  
+    low_cmd_.motor_cmd[i-3].tau = control_signal_.torques[i];
+  }
 
 }
 

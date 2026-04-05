@@ -3,7 +3,7 @@ This repo uses [unitree_ros2](https://github.com/unitreerobotics/unitree_ros2) f
 
 We add on top of these some new messages and a complete robot_hal script to talk with the robots in **ROS2**, **fully compatible** with different **dls controllers and state estimators**, like: 
 
-- [basic-locomotion-dls-isaaclab](https://github.com/iit-DLSLab/basic-locomotion-dls-isaaclab) for RL
+- [basic-locomotion-isaaclab](https://github.com/iit-DLSLab/basic-locomotion-isaaclab) for RL
 - [Quadruped-PyMPC](https://github.com/iit-DLSLab/Quadruped-PyMPC) for MPC
 - [muse](https://github.com/iit-DLSLab/muse/tree/unitree_sdk) for State Estimation
 

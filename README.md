@@ -28,14 +28,18 @@ conda activate unitree_ros2_humble_env
 
 Be sure to have these before proceeding. 
 
-## Unitree ROS2 package
+## Setup Go2, B2, A2
 
-Follow [README_unitree_ros2](https://github.com/iit-DLSLab/unitree_ros2_dls/blob/main/README_unitree_ros2.md) to install the thing needed for GO2, B2, A2.
+Follow [README_unitree_ros2](https://github.com/iit-DLSLab/unitree_ros2_dls/blob/main/README_unitree_ros2.md) to install the things needed for GO2, B2 and A2.
 
 
-## Z1 sdk/controller packages
+## Setup Z1 arm
 
-Follow [README_unitree_z1](https://github.com/iit-DLSLab/unitree_ros2_dls/blob/main/README_unitree_z1.md) to install the thing needed for Z1.
+Follow [README_unitree_z1](https://github.com/iit-DLSLab/unitree_ros2_dls/blob/main/README_unitree_z1.md) to install the things needed for Z1 arm.
+
+## How to contribute
+
+PRs are very welcome (search for **TODO** in the issue, or add what you like)!
 
 ## Maintainer
 

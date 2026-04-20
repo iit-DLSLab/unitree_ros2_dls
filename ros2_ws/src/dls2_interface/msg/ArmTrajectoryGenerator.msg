@@ -11,3 +11,6 @@ float64 desired_arm_gripper_velocity
 
 float64[6] arm_kp
 float64[6] arm_kd
+
+float64 gripper_kp
+float64 gripper_kd

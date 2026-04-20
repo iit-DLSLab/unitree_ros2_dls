@@ -22,16 +22,8 @@ class Z1HALNode(Node):
         self.subscriber_arm_control_signal = self.create_subscription(ArmControlSignal,"/arm_control_signal", self.get_arm_control_signal_callback, 1)
 
         # some init
-        self.desired_arm_joints_position = np.zeros(6)
-        self.desired_arm_joints_velocity = np.zeros(6)
         self.desired_arm_joints_torque = np.zeros(6)
-        self.desired_gripper_position = 0.0
-        self.desired_gripper_velocity = 0.0
         self.desired_gripper_torque = 0.0
-        self.Kp_arm = 0
-        self.Kd_arm = 0
-        self.Kp_gripper = 0.0
-        self.Kd_gripper = 0.0
 
         np.set_printoptions(precision=3, suppress=True)
         self.arm = unitree_arm_interface.ArmInterface(hasGripper=True)

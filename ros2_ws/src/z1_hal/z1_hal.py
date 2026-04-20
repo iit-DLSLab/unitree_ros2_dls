@@ -48,6 +48,7 @@ class Z1HALNode(Node):
         # since in the unitree low-level control these constants are multiplied..
         # see https://support.unitree.com/home/en/Z1_developer/sdk_intro sec. 2.2.3
         self.arm._ctrlComp.lowcmd.setControlGain(np.array(msg.arm_kp)/25.6, np.array(msg.arm_kd)/0.0128)
+        self.arm._ctrlComp.lowcmd.setGripperGain(msg.gripper_kp/25.6, msg.gripper_kd/0.0128)
 
 
     def get_arm_control_signal_callback(self, msg):

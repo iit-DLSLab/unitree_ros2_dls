@@ -29,6 +29,8 @@ class Z1HALNode(Node):
         self.arm = unitree_arm_interface.ArmInterface(hasGripper=True)
         self.armModel = self.arm._ctrlComp.armModel
         self.arm.setFsmLowcmd()
+        self.arm._ctrlComp.lowcmd.setControlGain(np.array([0.0]*6), np.array([0.0]*6))
+        self.arm._ctrlComp.lowcmd.setGripperGain(0.0, 0.0)
 
 
     def get_arm_trajectory_generator_callback(self, msg):

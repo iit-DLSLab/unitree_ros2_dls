@@ -22,7 +22,7 @@ Next, open the network settings, find the network interface that the robot conne
 
 Open setup.sh file.
 ```bash
-sudo gedit ros2_connect.bash
+sudo gedit unitree_ros2_connect.bash
 ```
 ```bash
 #!/bin/bash
@@ -38,7 +38,7 @@ where "enp3s0" is the network interface name of unitree robot connected.
 
 2. Ensure that the network of robot is connected correctly, open a terminal and input:  
 ```bash
-source ros2_connect.bash
+source unitree_ros2_connect.bash
 ros2 topic list
 ```
 
@@ -64,7 +64,7 @@ The source code of the hal is located at `/ros2_ws/src/quadruped_hal`.
 
 Open a terminal and input:
 ```bash
-source ros2_connect.bash
+source unitree_ros2_connect.bash
 ```
 **Note that in every terminal where you launch your other scripts, you need to source this file first. Put it in .bashrc as an alias!**
 

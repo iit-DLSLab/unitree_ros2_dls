@@ -43,6 +43,12 @@ ros2 topic list
 ```
 
 
+3. **Note that in every terminal where you launch your other scripts, you need to source this file first. Put it in .bashrc as an alias!** 
+```bash
+gedit .bashrc
+alias unitree_ros2_connect='source unitree_ros2_connect.bash'
+```
+
 If you have any problem in seeing, listening the topic, maybe it's the firewall.
 
 The firewall gives us problem!!
@@ -64,7 +70,7 @@ The source code of the hal is located at `/ros2_ws/src/quadruped_hal`.
 
 Open a terminal and input:
 ```bash
-source unitree_ros2_connect.bash
+unitree_ros2_connect
 ```
 **Note that in every terminal where you launch your other scripts, you need to source this file first. Put it in .bashrc as an alias!**
 

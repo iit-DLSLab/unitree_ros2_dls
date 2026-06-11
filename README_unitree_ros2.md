@@ -47,20 +47,7 @@ ros2 topic list
 ```bash
 gedit .bashrc
 alias unitree_ros2_connect='source unitree_ros2_connect.bash'
-```
-
-If you have any problem in seeing, listening the topic, maybe it's the firewall.
-
-The firewall gives us problem!!
-```bash
-sudo ufw disable
-```
-
-or
-
-```bash
-sudo ufw allow from 192.168.123.18 to any port 7400:65535 proto udp
-sudo ufw allow from 192.168.123.161 to any port 7400:65535 proto udp
+Restart the terminal!!!!
 ```
 
 

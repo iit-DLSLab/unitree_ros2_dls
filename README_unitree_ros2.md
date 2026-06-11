@@ -21,9 +21,9 @@ If you have any problem complaining **rosidl_generate_interfaces** (likely), sea
 ifconfig
 ```
 
-3. Next, open the network settings, find the network interface that the robot is connected. In IPv4 setting, **change the IPv4 mode to manual, set the address to 192.168.123.99, and set the mask to 255.255.255.0**. After completion, click apply and wait for the network to reconnect.
+2. Next, open the network settings, find the network interface that the robot is connected. In IPv4 setting, **change the IPv4 mode to manual, set the address to 192.168.123.99, and set the mask to 255.255.255.0**. After completion, click apply and wait for the network to reconnect.
 
-4. Then open the file unitree_ros2_connect
+3. Then open the file unitree_ros2_connect
 ```bash
 sudo gedit unitree_ros2_connect.bash
 ```

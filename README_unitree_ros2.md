@@ -27,7 +27,6 @@ ifconfig
 ```bash
 sudo gedit unitree_ros2_connect.bash
 ```
-```bash
 
 4. ...and write inside your interface name found in step 1 instead of **enp3s0**
 ```bash

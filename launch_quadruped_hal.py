@@ -9,11 +9,11 @@ submodule_path = dir_path + "/ros2_ws/install"
 print("submodule_path:", submodule_path)
 if not os.path.exists(submodule_path):
     print("Building the HAL/msgs first..")
-    os.system("bash -c 'cd ros2_ws && colcon build && cd .. && source unitree_ros2_connect.bash && source ros2_ws/install/setup.bash && ./ros2_ws/install/quadruped_hal/bin/quadruped_hal'")
+    os.system("bash -c 'source cyclonedds_ws/install/setup.bash && cd ros2_ws && colcon build && cd .. && source unitree_ros2_connect.bash && source ros2_ws/install/setup.bash && ./ros2_ws/install/quadruped_hal/bin/quadruped_hal'")
 else:
     print("\n\n")
     print("HAL/msgs already built - if you have any modifications, please delete the build folder in the submodule")
     print("\n\n")
     time.sleep(2)
-    os.system("bash -c 'source unitree_ros2_connect.bash && source ros2_ws/install/setup.bash && ./ros2_ws/install/quadruped_hal/bin/quadruped_hal'")
+    os.system("bash -c 'source cyclonedds_ws/install/setup.bash && source unitree_ros2_connect.bash && source ros2_ws/install/setup.bash && ./ros2_ws/install/quadruped_hal/bin/quadruped_hal'")
 

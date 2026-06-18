@@ -15,7 +15,7 @@ If you have any problem complaining **rosidl_generate_interfaces** (likely), sea
 
 ## Network configuration
 
-1. Connect Unitree robot and the computer using an Ethernet cable. Then, open the network settings, find the network interface to which the robot is connected. In IPv4 setting, **change the IPv4 mode to manual, set the address to 192.168.123.99, and set the mask to 255.255.255.0**. After completion, click apply and wait for the network to reconnect.
+1. Connect Unitree robot and the computer using an Ethernet cable. Then, open the network settings, find the network interface to which the robot is connected. In IPv4 setting, **change the IPv4 mode to manual, set the address to 192.168.123.99 for GO2, 192.168.123.222 for A2, and set the mask to 255.255.255.0**. After completion, click apply and wait for the network to reconnect.
 
 2. Then, use the command **ifconfig** to view the network interface that the robot connected **(e.g. enp3s0)**:
 ```bash
@@ -63,7 +63,8 @@ unitree_ros2_connect
 
 After compilation, run in the terminal:
 ```bash
-python3 launch_quadruped_hal.py 
+python3 launch_go2_hal.py 
+python3 launch_a2_hal.py 
 ```
 
 

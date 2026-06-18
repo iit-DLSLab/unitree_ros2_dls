@@ -1,47 +1,19 @@
-import shlex
-import subprocess
+import sys
+import os 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(dir_path+"/../")
+
 import time
-from pathlib import Path
 
-
-DIR_PATH = Path(__file__).resolve().parent
-ROS_WS = DIR_PATH / "ros2_ws"
-EXECUTABLE = ROS_WS / "install" / "go2_hal" / "bin" / "go2_hal"
-
-CYCLONEDDS_SETUP = DIR_PATH / "unitree_ros2" / "cyclonedds_ws" / "install" / "setup.bash"
-if not CYCLONEDDS_SETUP.exists():
-    CYCLONEDDS_SETUP = DIR_PATH / "cyclonedds_ws" / "install" / "setup.bash"
-
-
-def run_bash(command):
-    subprocess.run(["bash", "-c", command], check=True)
-
-
-def quoted(path):
-    return shlex.quote(str(path))
-
-
-print("submodule_path:", ROS_WS / "install")
-if not EXECUTABLE.exists():
-    print("Building the GO2 HAL/msgs first..")
-    run_bash(
-        f"source {quoted(CYCLONEDDS_SETUP)} && "
-        f"cd {quoted(ROS_WS)} && "
-        "colcon build --packages-select dls2_interface go2_hal && "
-        f"cd {quoted(DIR_PATH)} && "
-        "source unitree_ros2_connect.bash && "
-        "source ros2_ws/install/setup.bash && "
-        f"{quoted(EXECUTABLE)}"
-    )
+submodule_path = dir_path + "/ros2_ws/install"
+print("submodule_path:", submodule_path)
+if not os.path.exists(submodule_path):
+    print("Building the HAL/msgs first..")
+    os.system("bash -c 'source cyclonedds_ws/install/setup.bash && cd ros2_ws && colcon build && cd .. && source unitree_ros2_connect.bash && source ros2_ws/install/setup.bash && ./ros2_ws/install/go2_hal/bin/go2_hal'")
 else:
     print("\n\n")
-    print("GO2 HAL/msgs already built - if you have any modifications, please delete the build folder in the submodule")
+    print("HAL/msgs already built - if you have any modifications, please delete the build folder in the submodule")
     print("\n\n")
     time.sleep(2)
-    run_bash(
-        f"source {quoted(CYCLONEDDS_SETUP)} && "
-        f"cd {quoted(DIR_PATH)} && "
-        "source unitree_ros2_connect.bash && "
-        "source ros2_ws/install/setup.bash && "
-        f"{quoted(EXECUTABLE)}"
-    )
+    os.system("bash -c 'source cyclonedds_ws/install/setup.bash && source unitree_ros2_connect.bash && source ros2_ws/install/setup.bash && ./ros2_ws/install/go2_hal/bin/go2_hal'")
+

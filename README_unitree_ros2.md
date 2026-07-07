@@ -52,9 +52,6 @@ Restart the terminal!!!!
 
 
 ## Running the quadruped hal
-
-The source code of the HAL is located at `/ros2_ws/src/quadruped_hal`.
-
 Open a terminal and input:
 ```bash
 unitree_ros2_connect

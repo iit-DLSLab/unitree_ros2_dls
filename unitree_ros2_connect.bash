@@ -6,5 +6,5 @@ echo "Current dir: $CURRENT_DIR"
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 export ROS_DOMAIN_ID=0 # Set a unique domain ID for your local environment
 export CYCLONEDDS_URI='<CycloneDDS><Domain><General><Interfaces>
-                            <NetworkInterface name="enp98s0" priority="default" multicast="default" />
+                            <NetworkInterface name="enx6c1ff71cdfe2" priority="default" multicast="default" />
                         </Interfaces></General></Domain></CycloneDDS>'

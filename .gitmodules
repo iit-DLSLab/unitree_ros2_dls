@@ -7,3 +7,6 @@
 [submodule "unitree_z1/z1_sdk"]
 	path = unitree_z1/z1_sdk
 	url = git@github.com:iit-DLSLab/z1_sdk.git
+[submodule "unitree_legged_sdk"]
+	path = unitree_legged_sdk
+	url = git@github.com:unitreerobotics/unitree_legged_sdk.git

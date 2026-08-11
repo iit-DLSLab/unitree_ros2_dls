@@ -1,6 +1,7 @@
 import rclpy 
 from rclpy.node import Node 
 from dls2_interface.msg import ArmState, ArmTrajectoryGenerator, ArmControlSignal
+from sensor_msgs.msg import JointState
 
 import numpy as np
 import sys
@@ -18,12 +19,14 @@ class Z1HALNode(Node):
         arm_state_freq = 300  # Hz 
         self.timer = self.create_timer(1/arm_state_freq, self.compute_z1_hal_callback)
         self.publisher_arm_blind_state = self.create_publisher(ArmState,"/arm_state", 1)
+        self.publisher_joint_state = self.create_publisher(JointState, "/joint_states", 1)
         self.subscriber_trajectory_generator_arm = self.create_subscription(ArmTrajectoryGenerator,"/arm_trajectory_generator", self.get_arm_trajectory_generator_callback, 1)
         self.subscriber_arm_control_signal = self.create_subscription(ArmControlSignal,"/arm_control_signal", self.get_arm_control_signal_callback, 1)
 
         # some init
         self.desired_arm_joints_torque = np.zeros(6)
         self.desired_gripper_torque = 0.0
+        self.joint_names = [f"joint{i}" for i in range(1, 7)]
 
         np.set_printoptions(precision=3, suppress=True)
         self.arm = unitree_arm_interface.ArmInterface(hasGripper=True)
@@ -56,13 +59,23 @@ class Z1HALNode(Node):
 
         current_q = self.arm.lowstate.getQ()
         current_qd = self.arm.lowstate.getQd()
+        current_tau = self.arm.lowstate.getTau()
         current_gripper_q = self.arm.lowstate.getGripperQ()
 
         arm_state_msg = ArmState()
+        arm_state_msg.joints_name = self.joint_names
         arm_state_msg.joints_position = current_q.tolist()
         arm_state_msg.joints_velocity = current_qd.tolist()
         arm_state_msg.gripper_position = current_gripper_q
         self.publisher_arm_blind_state.publish(arm_state_msg)
+
+        joint_state_msg = JointState()
+        joint_state_msg.header.stamp = self.get_clock().now().to_msg()
+        joint_state_msg.name = self.joint_names
+        joint_state_msg.position = current_q.tolist()
+        joint_state_msg.velocity = current_qd.tolist()
+        joint_state_msg.effort = current_tau.tolist()
+        self.publisher_joint_state.publish(joint_state_msg)
 
 
 #---------------------------

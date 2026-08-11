@@ -53,11 +53,13 @@ set(
   DEPENDENCY_LIST
   dls2_interface
   rclcpp
+  sensor_msgs
 )
 
 find_package(ament_cmake REQUIRED)
 find_package(dls2_interface REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
 add_executable(aliengo_hal aliengo_hal.cpp)
 ament_target_dependencies(aliengo_hal ${DEPENDENCY_LIST})

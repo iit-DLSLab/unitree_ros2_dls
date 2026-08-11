@@ -6,6 +6,7 @@
 
 #include "motor_crc_hg.h"
 #include "rclcpp/rclcpp.hpp"
+#include "sensor_msgs/msg/joint_state.hpp"
 #include "unitree_hg/msg/low_cmd.hpp"
 #include "unitree_hg/msg/low_state.hpp"
 
@@ -62,9 +63,11 @@ class LowLevelCmdNode : public rclcpp::Node {
     dls2_interface::msg::BlindState blind_state_; // default init
     dls2_interface::msg::TrajectoryGenerator trajectory_generator_; // default init
     dls2_interface::msg::ControlSignal control_signal_; // default init
+    sensor_msgs::msg::JointState joint_state_; // default init
 
     rclcpp::Publisher<dls2_interface::msg::Imu>::SharedPtr imu_pub_;
     rclcpp::Publisher<dls2_interface::msg::BlindState>::SharedPtr blind_state_pub_;
+    rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_pub_;
     rclcpp::Subscription<dls2_interface::msg::TrajectoryGenerator>::SharedPtr trajectory_generator_sub_;
     rclcpp::Subscription<dls2_interface::msg::ControlSignal>::SharedPtr control_signal_sub_;
 
@@ -95,6 +98,13 @@ void LowLevelCmdNode::Init() {
   // Create publishers and subscribers to talk with the controller/DLS2
   imu_pub_ = this->create_publisher<dls2_interface::msg::Imu>("/imu", 1);
   blind_state_pub_ = this->create_publisher<dls2_interface::msg::BlindState>("/blind_state", 1);
+  joint_state_pub_ = this->create_publisher<sensor_msgs::msg::JointState>("/joint_states", 1);
+  joint_state_.name = {
+      "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
+      "FR_hip_joint", "FR_thigh_joint", "FR_calf_joint",
+      "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
+      "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint"};
+  blind_state_.joints_name = joint_state_.name;
   trajectory_generator_sub_ = this->create_subscription<dls2_interface::msg::TrajectoryGenerator>(
       "/trajectory_generator", 1, [this](const dls2_interface::msg::TrajectoryGenerator::SharedPtr msg) {
         TrajectoryGeneratorMessageHandler(msg);
@@ -189,6 +199,12 @@ void LowLevelCmdNode::LowStateMessageHandler(
   }
 
   blind_state_pub_->publish(blind_state_);
+
+  joint_state_.header.stamp = this->now();
+  joint_state_.position = blind_state_.joints_position;
+  joint_state_.velocity = blind_state_.joints_velocity;
+  joint_state_.effort = blind_state_.joints_effort;
+  joint_state_pub_->publish(joint_state_);
   
 }
 

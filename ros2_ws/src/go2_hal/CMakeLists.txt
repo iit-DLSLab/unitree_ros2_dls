@@ -27,6 +27,7 @@ set(
   dls2_interface
   unitree_api
   rclcpp
+  sensor_msgs
   std_msgs
   rosbag2_cpp
 )
@@ -36,6 +37,7 @@ find_package(unitree_go REQUIRED)
 find_package(dls2_interface REQUIRED)
 find_package(unitree_api REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rosbag2_cpp REQUIRED)
 find_package(Eigen3 REQUIRED)

@@ -11,6 +11,7 @@
   <depend>unitree_go</depend>
   <depend>unitree_api</depend>
   <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
   <depend>rosbag2_cpp</depend>
   <depend>dls2_interface</depend>

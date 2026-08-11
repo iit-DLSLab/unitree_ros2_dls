@@ -7,6 +7,7 @@
 #include "motor_crc.h"
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
+#include "unitree_go/msg/lidar_state.hpp"
 #include "unitree_go/msg/low_cmd.hpp"
 #include "unitree_go/msg/low_state.hpp"
 
@@ -19,9 +20,6 @@
 #include "dls2_interface/msg/trajectory_generator.hpp"
 #include "dls2_interface/msg/control_signal.hpp"
 
-// Not sure is these defines are necessary
-#define TOPIC_LOWCMD "/lowcmd"
-#define TOPIC_LOWSTATE "/lowstate"
 
 class LowLevelCmdNode : public rclcpp::Node {
   public:
@@ -36,10 +34,12 @@ class LowLevelCmdNode : public rclcpp::Node {
 
   private:
     void InitLowCmd();
+    void LidarStateMessageHandler(unitree_go::msg::LidarState::SharedPtr msg);
     void LowStateMessageHandler(unitree_go::msg::LowState::SharedPtr msg);
     void TrajectoryGeneratorMessageHandler(dls2_interface::msg::TrajectoryGenerator::SharedPtr msg);
     void ControlSignalMessageHandler(dls2_interface::msg::ControlSignal::SharedPtr msg);
     void LowCmdWrite();
+    double SynchronizedTimestamp();
 
 
     // Don't know what this function does
@@ -52,8 +52,13 @@ class LowLevelCmdNode : public rclcpp::Node {
     unitree_go::msg::MotorState motor_[12];  // Unitree motor state message
 
     rclcpp::Publisher<unitree_go::msg::LowCmd>::SharedPtr low_cmd_pub_;
+    rclcpp::Subscription<unitree_go::msg::LidarState>::SharedPtr lidar_state_sub_;
     rclcpp::Subscription<unitree_go::msg::LowState>::SharedPtr low_state_sub_;
     rclcpp::TimerBase::SharedPtr timer_;
+
+    double lidar_time_offset_{0.0};
+    double last_synchronized_stamp_{0.0};
+    bool lidar_time_synchronized_{false};
 
     // DLS2 related publisher and subscriber
     dls2_interface::msg::Imu imu_;              // default init
@@ -103,14 +108,23 @@ void LowLevelCmdNode::Init() {
   // Create publishers and subscribers to talk with Unitree
   InitLowCmd(); 
   low_cmd_pub_ = this->create_publisher<unitree_go::msg::LowCmd>("/lowcmd", 1);
+  
   low_state_sub_ = this->create_subscription<unitree_go::msg::LowState>(
       "/lowstate", 10, [this](const unitree_go::msg::LowState::SharedPtr msg) {
         LowStateMessageHandler(msg);
       });
   
+      lidar_state_sub_ = this->create_subscription<unitree_go::msg::LidarState>(
+      "/utlidar/lidar_state", rclcpp::SensorDataQoS(),
+      [this](const unitree_go::msg::LidarState::SharedPtr msg) {
+        LidarStateMessageHandler(msg);
+      });
+  
   // Create publishers and subscribers to talk with the controller/DLS2
   imu_pub_ = this->create_publisher<dls2_interface::msg::Imu>("/imu", 1);
+  
   blind_state_pub_ = this->create_publisher<dls2_interface::msg::BlindState>("/blind_state", 1);
+  
   joint_state_pub_ = this->create_publisher<sensor_msgs::msg::JointState>("/joint_states", 1);
   joint_state_.name = {
       "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
@@ -118,15 +132,70 @@ void LowLevelCmdNode::Init() {
       "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
       "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint"};
   blind_state_.joints_name = joint_state_.name;
+  
   trajectory_generator_sub_ = this->create_subscription<dls2_interface::msg::TrajectoryGenerator>(
       "/trajectory_generator", 1, [this](const dls2_interface::msg::TrajectoryGenerator::SharedPtr msg) {
         TrajectoryGeneratorMessageHandler(msg);
       });
-  control_signal_sub_ = this->create_subscription<dls2_interface::msg::ControlSignal>(
+  
+      control_signal_sub_ = this->create_subscription<dls2_interface::msg::ControlSignal>(
       "/control_signal", 1, [this](const dls2_interface::msg::ControlSignal::SharedPtr msg) {
         ControlSignalMessageHandler(msg);
       });
 
+}
+
+
+void LowLevelCmdNode::LidarStateMessageHandler(
+    const unitree_go::msg::LidarState::SharedPtr msg) {
+  if (!std::isfinite(msg->stamp) || msg->stamp <= 0.0) {
+    RCLCPP_WARN_THROTTLE(
+        this->get_logger(), *this->get_clock(), 5000,
+        "Ignoring invalid LidarState stamp: %.9f", msg->stamp);
+    return;
+  }
+
+  const double observed_offset = msg->stamp - this->now().seconds();
+  constexpr double kOffsetFilterGain = 0.05;
+  constexpr double kClockResetThreshold = 1.0;
+
+  if (!lidar_time_synchronized_) {
+    lidar_time_offset_ = observed_offset;
+    lidar_time_synchronized_ = true;
+    RCLCPP_INFO(
+        this->get_logger(),
+        "GO2 timestamps synchronized to %s (offset: %.6f s)",
+        "/utlidar/lidar_state", lidar_time_offset_);
+  } 
+  else if (std::abs(observed_offset - lidar_time_offset_) >
+             kClockResetThreshold) {
+    RCLCPP_WARN(
+        this->get_logger(),
+        "Lidar clock discontinuity detected; resetting timestamp offset "
+        "from %.6f s to %.6f s",
+        lidar_time_offset_, observed_offset);
+    lidar_time_offset_ = observed_offset;
+    last_synchronized_stamp_ = 0.0;
+  } 
+  else {
+    lidar_time_offset_ +=
+        kOffsetFilterGain * (observed_offset - lidar_time_offset_);
+  }
+}
+
+
+double LowLevelCmdNode::SynchronizedTimestamp() {
+  double stamp = this->now().seconds();
+  if (lidar_time_synchronized_) {
+    stamp += lidar_time_offset_;
+  }
+
+  // Keep the published time monotonic while the offset filter converges.
+  if (stamp <= last_synchronized_stamp_) {
+    stamp = std::nextafter(last_synchronized_stamp_, INFINITY);
+  }
+  last_synchronized_stamp_ = stamp;
+  return stamp;
 }
 
 
@@ -159,6 +228,7 @@ void LowLevelCmdNode::Start() {
 void LowLevelCmdNode::LowStateMessageHandler(
     const unitree_go::msg::LowState::SharedPtr msg) {
   low_state_ = *msg;
+  const double synchronized_stamp = SynchronizedTimestamp();
 
 
   // Publish DLS2 IMU message
@@ -171,6 +241,7 @@ void LowLevelCmdNode::LowStateMessageHandler(
     imu_.angular_velocity[i] = low_state_.imu_state.gyroscope[i];
     imu_.linear_acceleration[i] = low_state_.imu_state.accelerometer[i];
   }
+  imu_.timestamp = synchronized_stamp;
   imu_pub_->publish(imu_);
 
 
@@ -215,9 +286,10 @@ void LowLevelCmdNode::LowStateMessageHandler(
     blind_state_.joints_effort[i-3] = motor_[i].tau_est;
   }
 
+  blind_state_.timestamp = synchronized_stamp;
   blind_state_pub_->publish(blind_state_);
 
-  joint_state_.header.stamp = this->now();
+  joint_state_.header.stamp = rclcpp::Time(std::llround(synchronized_stamp * 1e9));
   joint_state_.position = blind_state_.joints_position;
   joint_state_.velocity = blind_state_.joints_velocity;
   joint_state_.effort = blind_state_.joints_effort;
@@ -301,10 +373,8 @@ void LowLevelCmdNode::ControlSignalMessageHandler(
 }
 
 void LowLevelCmdNode::LowCmdWrite() {
-
     get_crc(low_cmd_);  // Check motor cmd crc
     low_cmd_pub_->publish(low_cmd_);
-
 }
 
 

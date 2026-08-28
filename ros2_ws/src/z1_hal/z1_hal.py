@@ -1,6 +1,6 @@
 import rclpy 
 from rclpy.node import Node 
-from dls2_interface.msg import ArmState, ArmTrajectoryGenerator, ArmControlSignal
+from dls2_interface.msg import ArmState, ArmControlSignal
 from sensor_msgs.msg import JointState
 
 import numpy as np
@@ -20,12 +20,9 @@ class Z1HALNode(Node):
         self.timer = self.create_timer(1/arm_state_freq, self.compute_z1_hal_callback)
         self.publisher_arm_blind_state = self.create_publisher(ArmState,"/arm_state", 1)
         self.publisher_joint_state = self.create_publisher(JointState, "/joint_states", 1)
-        self.subscriber_trajectory_generator_arm = self.create_subscription(ArmTrajectoryGenerator,"/arm_trajectory_generator", self.get_arm_trajectory_generator_callback, 1)
         self.subscriber_arm_control_signal = self.create_subscription(ArmControlSignal,"/arm_control_signal", self.get_arm_control_signal_callback, 1)
 
         # some init
-        self.desired_arm_joints_torque = np.zeros(6)
-        self.desired_gripper_torque = 0.0
         self.joint_names = [f"joint{i}" for i in range(1, 7)]
 
         np.set_printoptions(precision=3, suppress=True)
@@ -36,22 +33,16 @@ class Z1HALNode(Node):
         self.arm._ctrlComp.lowcmd.setGripperGain(0.0, 0.0)
 
 
-    def get_arm_trajectory_generator_callback(self, msg):
-        
-        self.arm.setArmCmd(np.array(msg.desired_arm_joints_position), np.array(msg.desired_arm_joints_velocity), self.desired_arm_joints_torque)
-        self.arm.setGripperCmd(msg.desired_arm_gripper_position, msg.desired_arm_gripper_velocity, self.desired_gripper_torque)
-        
+    def get_arm_control_signal_callback(self, msg):
+
+        self.arm.setArmCmd(np.array(msg.arm_joints_position), np.array(msg.arm_joints_velocity), np.array(msg.arm_joints_torques))
+        self.arm.setGripperCmd(msg.gripper_joints_position[0], msg.gripper_joints_velocity[0], msg.gripper_joints_torques[0])
+
         # control gain - these values are divided for two constants since in the low-level
         # since in the unitree low-level control these constants are multiplied..
         # see https://support.unitree.com/home/en/Z1_developer/sdk_intro sec. 2.2.3
         self.arm._ctrlComp.lowcmd.setControlGain(np.array(msg.arm_kp)/25.6, np.array(msg.arm_kd)/0.0128)
-        self.arm._ctrlComp.lowcmd.setGripperGain(msg.gripper_kp/25.6, msg.gripper_kd/0.0128)
-
-
-    def get_arm_control_signal_callback(self, msg):
-
-        self.desired_arm_joints_torque = np.array(msg.desired_arm_joints_torque)
-        self.desired_gripper_torque = msg.desired_arm_gripper_torque
+        self.arm._ctrlComp.lowcmd.setGripperGain(msg.gripper_kp[0]/25.6, msg.gripper_kd[0]/0.0128)
 
 
     def compute_z1_hal_callback(self):
@@ -66,7 +57,7 @@ class Z1HALNode(Node):
         arm_state_msg.joints_name = self.joint_names
         arm_state_msg.joints_position = current_q.tolist()
         arm_state_msg.joints_velocity = current_qd.tolist()
-        arm_state_msg.gripper_position = current_gripper_q
+        arm_state_msg.gripper_position = [current_gripper_q]
         self.publisher_arm_blind_state.publish(arm_state_msg)
 
         joint_state_msg = JointState()

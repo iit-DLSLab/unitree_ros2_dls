@@ -12,6 +12,6 @@ float64[] joints_acceleration
 float64[] joints_effort
 float64[] joints_temperature
 
-float64 gripper_position
-float64 gripper_velocity
-float64 gripper_effort
+float64[] gripper_position
+float64[] gripper_velocity
+float64[] gripper_effort

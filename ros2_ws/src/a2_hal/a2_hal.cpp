@@ -130,8 +130,8 @@ void LowLevelCmdNode::Start() {
 
 
 // Publish states to DLS2 topics
-void LowLevelCmdNode::LowStateMessageHandler(
-    const unitree_hg::msg::LowState::SharedPtr msg) {
+void LowLevelCmdNode::LowStateMessageHandler(const unitree_hg::msg::LowState::SharedPtr msg) {
+  
   low_state_ = *msg;
   low_cmd_.mode_machine = low_state_.mode_machine;
 
@@ -202,8 +202,7 @@ void LowLevelCmdNode::LowStateMessageHandler(
 
 
 // Subscribe to DLS2 control signal message and publish low level command to Unitree
-void LowLevelCmdNode::ControlSignalMessageHandler(
-    const dls2_interface::msg::ControlSignal::SharedPtr msg) {
+void LowLevelCmdNode::ControlSignalMessageHandler(const dls2_interface::msg::ControlSignal::SharedPtr msg) {
 
   control_signal_ = *msg;
 

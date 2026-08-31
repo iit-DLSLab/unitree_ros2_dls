@@ -30,7 +30,7 @@ class LowLevelCmdNode : public rclcpp::Node {
     explicit LowLevelCmdNode() : Node("low_level_cmd_node") {
       Init();
       Start();
-      std::cout << "HAL started correctly." << std::endl;
+      std::cout << "HAL A2 started correctly." << std::endl;
   }
 
   void Init();
@@ -93,8 +93,8 @@ void LowLevelCmdNode::Init() {
   
   // Create publishers and subscribers to talk with the controller/DLS2
   imu_pub_ = this->create_publisher<dls2_interface::msg::Imu>("/imu", 1);
-  blind_state_pub_ = this->create_publisher<dls2_interface::msg::BlindState>("/blind_state", 1);
-  joint_state_pub_ = this->create_publisher<sensor_msgs::msg::JointState>("/joint_states", 1);
+  blind_state_pub_ = this->create_publisher<dls2_interface::msg::BlindState>("/blind_state_quadruped", 1);
+  joint_state_pub_ = this->create_publisher<sensor_msgs::msg::JointState>("/joint_states_quadruped", 1);
   joint_state_.name = {
       "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
       "FR_hip_joint", "FR_thigh_joint", "FR_calf_joint",
@@ -102,7 +102,7 @@ void LowLevelCmdNode::Init() {
       "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint"};
   blind_state_.joints_name = joint_state_.name;
   control_signal_sub_ = this->create_subscription<dls2_interface::msg::ControlSignal>(
-      "/control_signal", 1, [this](const dls2_interface::msg::ControlSignal::SharedPtr msg) {
+      "/control_signal_quadruped", 1, [this](const dls2_interface::msg::ControlSignal::SharedPtr msg) {
         ControlSignalMessageHandler(msg);
       });
 

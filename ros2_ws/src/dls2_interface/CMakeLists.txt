@@ -18,9 +18,6 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Imu.msg"
   "msg/FeetContactState.msg"
   "msg/ControlSignal.msg"
-  "msg/ArmState.msg"
-  "msg/ArmTrajectoryGenerator.msg"
-  "msg/ArmControlSignal.msg"
 )
 
 ament_export_dependencies(rosidl_default_runtime)

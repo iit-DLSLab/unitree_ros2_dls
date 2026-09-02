@@ -6,6 +6,7 @@
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
+#include "sensor_msgs/msg/joint_state.hpp"
 #define BOOST_BIND_GLOBAL_PLACEHOLDERS
 #include "unitree_legged_sdk/unitree_legged_sdk.h"
 
@@ -13,7 +14,6 @@
 #include "dls2_interface/msg/imu.hpp"
 #include "dls2_interface/msg/base_state.hpp"
 #include "dls2_interface/msg/blind_state.hpp"
-#include "dls2_interface/msg/trajectory_generator.hpp"
 #include "dls2_interface/msg/control_signal.hpp"
 
 using namespace UNITREE_LEGGED_SDK;
@@ -34,7 +34,7 @@ class LowLevelCmdNode : public rclcpp::Node {
           udp_(LOCAL_PORT, TARGET_IP, TARGET_PORT, LOW_CMD_LENGTH, LOW_STATE_LENGTH) {
       Init();
       Start();
-      std::cout << "HAL started correctly." << std::endl;
+      std::cout << "HAL Aliengo started correctly." << std::endl;
     }
 
     void Init();
@@ -46,7 +46,6 @@ class LowLevelCmdNode : public rclcpp::Node {
     void UDPSend();
     void RobotControl();
     void PublishLowState();
-    void TrajectoryGeneratorMessageHandler(dls2_interface::msg::TrajectoryGenerator::SharedPtr msg);
     void ControlSignalMessageHandler(dls2_interface::msg::ControlSignal::SharedPtr msg);
 
     Safety safe_;
@@ -63,12 +62,12 @@ class LowLevelCmdNode : public rclcpp::Node {
     // DLS2 related publisher and subscriber
     dls2_interface::msg::Imu imu_;              // default init
     dls2_interface::msg::BlindState blind_state_; // default init
-    dls2_interface::msg::TrajectoryGenerator trajectory_generator_; // default init
     dls2_interface::msg::ControlSignal control_signal_; // default init
+    sensor_msgs::msg::JointState joint_state_; // default init
 
     rclcpp::Publisher<dls2_interface::msg::Imu>::SharedPtr imu_pub_;
     rclcpp::Publisher<dls2_interface::msg::BlindState>::SharedPtr blind_state_pub_;
-    rclcpp::Subscription<dls2_interface::msg::TrajectoryGenerator>::SharedPtr trajectory_generator_sub_;
+    rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_pub_;
     rclcpp::Subscription<dls2_interface::msg::ControlSignal>::SharedPtr control_signal_sub_;
 };
 
@@ -79,13 +78,16 @@ void LowLevelCmdNode::Init() {
 
   // Create publishers and subscribers to talk with the controller/DLS2
   imu_pub_ = this->create_publisher<dls2_interface::msg::Imu>("/imu", 1);
-  blind_state_pub_ = this->create_publisher<dls2_interface::msg::BlindState>("/blind_state", 1);
-  trajectory_generator_sub_ = this->create_subscription<dls2_interface::msg::TrajectoryGenerator>(
-      "/trajectory_generator", 1, [this](const dls2_interface::msg::TrajectoryGenerator::SharedPtr msg) {
-        TrajectoryGeneratorMessageHandler(msg);
-      });
+  blind_state_pub_ = this->create_publisher<dls2_interface::msg::BlindState>("/blind_state_legged", 1);
+  joint_state_pub_ = this->create_publisher<sensor_msgs::msg::JointState>("/joint_states_legged", 1);
+  joint_state_.name = {
+      "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
+      "FR_hip_joint", "FR_thigh_joint", "FR_calf_joint",
+      "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
+      "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint"};
+  blind_state_.joints_name = joint_state_.name;
   control_signal_sub_ = this->create_subscription<dls2_interface::msg::ControlSignal>(
-      "/control_signal", 1, [this](const dls2_interface::msg::ControlSignal::SharedPtr msg) {
+      "/control_signal_legged", 1, [this](const dls2_interface::msg::ControlSignal::SharedPtr msg) {
         ControlSignalMessageHandler(msg);
       });
 }
@@ -197,50 +199,16 @@ void LowLevelCmdNode::PublishLowState() {
   }
 
   blind_state_pub_->publish(blind_state_);
+
+  joint_state_.header.stamp = this->now();
+  joint_state_.position = blind_state_.joints_position;
+  joint_state_.velocity = blind_state_.joints_velocity;
+  joint_state_.effort = blind_state_.joints_effort;
+  joint_state_pub_->publish(joint_state_);
 }
 
 
-// Subscribe to DLS2 trajectory generator message and publish low level command to Unitree
-void LowLevelCmdNode::TrajectoryGeneratorMessageHandler(
-    const dls2_interface::msg::TrajectoryGenerator::SharedPtr msg) {
-
-  trajectory_generator_ = *msg;
-  std::lock_guard<std::mutex> lock(low_cmd_mutex_);
-
-  // First motors state is FR
-  for (int i = 0; i < 3; i++) {
-    low_cmd_.motorCmd[i+3].q = trajectory_generator_.joints_position[i];
-    low_cmd_.motorCmd[i+3].dq = trajectory_generator_.joints_velocity[i];
-    low_cmd_.motorCmd[i+3].Kp = trajectory_generator_.kp[i];
-    low_cmd_.motorCmd[i+3].Kd = trajectory_generator_.kd[i];
-  }
-
-  // Second motors state is FL
-  for (int i = 3; i < 6; i++) {
-    low_cmd_.motorCmd[i-3].q = trajectory_generator_.joints_position[i];
-    low_cmd_.motorCmd[i-3].dq = trajectory_generator_.joints_velocity[i];
-    low_cmd_.motorCmd[i-3].Kp = trajectory_generator_.kp[i];
-    low_cmd_.motorCmd[i-3].Kd = trajectory_generator_.kd[i];
-  }
-
-  // Third motors state is RR
-  for (int i = 6; i < 9; i++) {
-    low_cmd_.motorCmd[i+3].q = trajectory_generator_.joints_position[i];
-    low_cmd_.motorCmd[i+3].dq = trajectory_generator_.joints_velocity[i];
-    low_cmd_.motorCmd[i+3].Kp = trajectory_generator_.kp[i];
-    low_cmd_.motorCmd[i+3].Kd = trajectory_generator_.kd[i];
-  }
-
-  // Fourth motors state is RL
-  for (int i = 9; i < 12; i++) {
-    low_cmd_.motorCmd[i-3].q = trajectory_generator_.joints_position[i];
-    low_cmd_.motorCmd[i-3].dq = trajectory_generator_.joints_velocity[i];
-    low_cmd_.motorCmd[i-3].Kp = trajectory_generator_.kp[i];
-    low_cmd_.motorCmd[i-3].Kd = trajectory_generator_.kd[i];
-  }
-}
-
-
+// Subscribe to DLS2 control signal message and publish low level command to Unitree
 void LowLevelCmdNode::ControlSignalMessageHandler(
     const dls2_interface::msg::ControlSignal::SharedPtr msg) {
 
@@ -249,22 +217,38 @@ void LowLevelCmdNode::ControlSignalMessageHandler(
 
   // First motors state is FR
   for (int i = 0; i < 3; i++) {
-    low_cmd_.motorCmd[i+3].tau = control_signal_.torques[i];
+    low_cmd_.motorCmd[i+3].q = control_signal_.joints_position[i];
+    low_cmd_.motorCmd[i+3].dq = control_signal_.joints_velocity[i];
+    low_cmd_.motorCmd[i+3].tau = control_signal_.joints_torques[i];
+    low_cmd_.motorCmd[i+3].Kp = control_signal_.kp[i];
+    low_cmd_.motorCmd[i+3].Kd = control_signal_.kd[i];
   }
 
   // Second motors state is FL
   for (int i = 3; i < 6; i++) {
-    low_cmd_.motorCmd[i-3].tau = control_signal_.torques[i];
+    low_cmd_.motorCmd[i-3].q = control_signal_.joints_position[i];
+    low_cmd_.motorCmd[i-3].dq = control_signal_.joints_velocity[i];
+    low_cmd_.motorCmd[i-3].tau = control_signal_.joints_torques[i];
+    low_cmd_.motorCmd[i-3].Kp = control_signal_.kp[i];
+    low_cmd_.motorCmd[i-3].Kd = control_signal_.kd[i];
   }
 
   // Third motors state is RR
   for (int i = 6; i < 9; i++) {
-    low_cmd_.motorCmd[i+3].tau = control_signal_.torques[i];
+    low_cmd_.motorCmd[i+3].q = control_signal_.joints_position[i];
+    low_cmd_.motorCmd[i+3].dq = control_signal_.joints_velocity[i];
+    low_cmd_.motorCmd[i+3].tau = control_signal_.joints_torques[i];
+    low_cmd_.motorCmd[i+3].Kp = control_signal_.kp[i];
+    low_cmd_.motorCmd[i+3].Kd = control_signal_.kd[i];
   }
 
   // Fourth motors state is RL
   for (int i = 9; i < 12; i++) {
-    low_cmd_.motorCmd[i-3].tau = control_signal_.torques[i];
+    low_cmd_.motorCmd[i-3].q = control_signal_.joints_position[i];
+    low_cmd_.motorCmd[i-3].dq = control_signal_.joints_velocity[i];
+    low_cmd_.motorCmd[i-3].tau = control_signal_.joints_torques[i];
+    low_cmd_.motorCmd[i-3].Kp = control_signal_.kp[i];
+    low_cmd_.motorCmd[i-3].Kd = control_signal_.kd[i];
   }
 }
 
